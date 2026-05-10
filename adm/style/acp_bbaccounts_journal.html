@@ -1,0 +1,208 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_BBACCOUNTS_JOURNAL_TITLE}</h1>
+
+<!-- IF S_IMPORT_FORM -->
+	<!-- INCLUDE acp_bbaccounts_journal_import.html -->
+<!-- ELSEIF S_CREATE_FORM -->
+	<form id="bbaccounts_journal_form" method="post" action="{U_ACTION}">
+		<fieldset>
+			<legend>{L_BBACCOUNTS_NEW_ENTRY}</legend>
+
+			<dl>
+				<dt><label for="entry_date">{L_BBACCOUNTS_ENTRY_DATE}:</label><br /><span>{L_BBACCOUNTS_ENTRY_DATE_EXPLAIN}</span></dt>
+				<dd><input type="date" id="entry_date" name="entry_date" value="{TODAY_ISO}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="description">{L_BBACCOUNTS_DESCRIPTION}:</label><br /><span>{L_BBACCOUNTS_DESCRIPTION_EXPLAIN}</span></dt>
+				<dd><input type="text" id="description" name="description" value="" size="60"></dd>
+			</dl>
+			<dl>
+				<dt><label for="reference_type">{L_BBACCOUNTS_REFERENCE_TYPE}:</label><br /><span>{L_BBACCOUNTS_REFERENCE_TYPE_EXPLAIN}</span></dt>
+				<dd>
+					<select id="reference_type" name="reference_type">
+						<option value="manual" selected>manual</option>
+						<option value="auto">auto</option>
+						<option value="import">import</option>
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label for="reference_source">{L_BBACCOUNTS_REFERENCE_SOURCE}:</label><br /><span>{L_BBACCOUNTS_REFERENCE_SOURCE_EXPLAIN}</span></dt>
+				<dd><input type="text" id="reference_source" name="reference_source" value="bbaccounts.manual" maxlength="64"></dd>
+			</dl>
+			<dl>
+				<dt><label for="reference_id">{L_BBACCOUNTS_REFERENCE_ID}:</label><br /><span>{L_BBACCOUNTS_REFERENCE_ID_EXPLAIN}</span></dt>
+				<dd><input type="number" id="reference_id" name="reference_id" value="0"></dd>
+			</dl>
+
+			<fieldset>
+				<legend>Lines</legend>
+				<p class="explain">{L_BBACCOUNTS_LINES_EXPLAIN}</p>
+				<table id="bbaccounts_lines" class="table1">
+					<thead>
+						<tr>
+							<th>{L_BBACCOUNTS_LINE_ACCOUNT}</th>
+							<th>{L_BBACCOUNTS_LINE_DEBIT}</th>
+							<th>{L_BBACCOUNTS_LINE_CREDIT}</th>
+							<th>{L_BBACCOUNTS_LINE_USER}</th>
+							<th>{L_BBACCOUNTS_LINE_MEMO}</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody id="bbaccounts_lines_body">
+						<tr class="bbaccounts-line">
+							<td><select name="line_account[]" class="bbaccounts-account-select"></select></td>
+							<td><input type="text" name="line_debit[]" value="" size="10" class="line-debit"></td>
+							<td><input type="text" name="line_credit[]" value="" size="10" class="line-credit"></td>
+							<td><input type="number" name="line_user[]" value="0" size="6"></td>
+							<td><input type="text" name="line_memo[]" value="" size="20"></td>
+							<td><button type="button" class="bbaccounts-remove-line">{L_BBACCOUNTS_REMOVE_LINE}</button></td>
+						</tr>
+						<tr class="bbaccounts-line">
+							<td><select name="line_account[]" class="bbaccounts-account-select"></select></td>
+							<td><input type="text" name="line_debit[]" value="" size="10" class="line-debit"></td>
+							<td><input type="text" name="line_credit[]" value="" size="10" class="line-credit"></td>
+							<td><input type="number" name="line_user[]" value="0" size="6"></td>
+							<td><input type="text" name="line_memo[]" value="" size="20"></td>
+							<td><button type="button" class="bbaccounts-remove-line">{L_BBACCOUNTS_REMOVE_LINE}</button></td>
+						</tr>
+					</tbody>
+				</table>
+				<p>
+					<button type="button" id="bbaccounts_add_line">{L_BBACCOUNTS_ADD_LINE}</button>
+					| {L_BBACCOUNTS_TOTAL_DR}: <span id="bbaccounts_total_dr">0.00</span>
+					| {L_BBACCOUNTS_TOTAL_CR}: <span id="bbaccounts_total_cr">0.00</span>
+				</p>
+			</fieldset>
+
+			<p class="submit-buttons">
+				<input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_SUBMIT}">
+				<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+			</p>
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+
+	<script type="text/javascript">
+		(function () {
+			var body = document.getElementById('bbaccounts_lines_body');
+			var totalDr = document.getElementById('bbaccounts_total_dr');
+			var totalCr = document.getElementById('bbaccounts_total_cr');
+			var accounts = JSON.parse('{S_ACCOUNTS_JSON}');
+
+			function populateSelect(select) {
+				if (select.options.length > 0) {
+					return;
+				}
+				var placeholder = document.createElement('option');
+				placeholder.value = '0';
+				placeholder.textContent = '—';
+				select.appendChild(placeholder);
+				accounts.forEach(function (a) {
+					var opt = document.createElement('option');
+					opt.value = a.id;
+					opt.textContent = a.label;
+					opt.dataset.currency = a.currency;
+					opt.dataset.subledger = a.is_subledger ? '1' : '0';
+					select.appendChild(opt);
+				});
+			}
+
+			body.querySelectorAll('select.bbaccounts-account-select').forEach(populateSelect);
+
+			function recompute() {
+				var dr = 0, cr = 0;
+				body.querySelectorAll('input.line-debit').forEach(function (i) {
+					var v = parseFloat(i.value); if (!isNaN(v)) dr += v;
+				});
+				body.querySelectorAll('input.line-credit').forEach(function (i) {
+					var v = parseFloat(i.value); if (!isNaN(v)) cr += v;
+				});
+				totalDr.textContent = dr.toFixed(2);
+				totalCr.textContent = cr.toFixed(2);
+			}
+
+			body.addEventListener('input', recompute);
+			body.addEventListener('click', function (e) {
+				if (e.target.classList.contains('bbaccounts-remove-line')) {
+					var row = e.target.closest('tr');
+					if (body.children.length > 2) row.remove();
+					recompute();
+				}
+			});
+
+			document.getElementById('bbaccounts_add_line').addEventListener('click', function () {
+				var first = body.querySelector('tr');
+				var clone = first.cloneNode(true);
+				clone.querySelectorAll('input').forEach(function (i) { i.value = ''; });
+				var select = clone.querySelector('select');
+				select.innerHTML = '';
+				populateSelect(select);
+				body.appendChild(clone);
+				recompute();
+			});
+		})();
+	</script>
+<!-- ELSE -->
+	<p>
+		<a class="button2" href="{U_NEW}">{L_BBACCOUNTS_NEW_ENTRY}</a>
+		<a class="button2" href="{U_IMPORT}">{L_BBACCOUNTS_IMPORT_CSV}</a>
+	</p>
+
+	<!-- IF .pagination -->
+		<div class="pagination top-pagination">
+			{TOTAL} &bull; <!-- INCLUDE pagination.html -->
+		</div>
+	<!-- ELSE -->
+		<div class="pagination top-pagination">{TOTAL}</div>
+	<!-- ENDIF -->
+
+	<table class="table1 zebra-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_JOURNAL_ID}</th>
+				<th>{L_BBACCOUNTS_ENTRY_DATE}</th>
+				<th>{L_BBACCOUNTS_DESCRIPTION}</th>
+				<th>{L_BBACCOUNTS_JOURNAL_LIST_USERS}</th>
+				<th>{L_BBACCOUNTS_REFERENCE}</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN entries -->
+			<tr>
+				<td>{entries.JOURNAL_ID}
+					<!-- IF entries.IS_REVERSED --><span class="badge">{L_BBACCOUNTS_REVERSED_BADGE}</span><!-- ENDIF -->
+					<!-- IF entries.IS_REVERSAL --><span class="badge">reversal of #{entries.REVERSAL_OF}</span><!-- ENDIF -->
+				</td>
+				<td>{entries.ENTRY_DATE}</td>
+				<td>{entries.DESCRIPTION}</td>
+				<td>
+					<!-- BEGIN users -->
+						{entries.users.USERNAME_FULL}<!-- IF not entries.users.S_LAST_ROW -->, <!-- ENDIF -->
+					<!-- END users -->
+				</td>
+				<td>
+					<!-- IF entries.REFERENCE_SOURCE -->{entries.REFERENCE_SOURCE}#{entries.REFERENCE_ID}<!-- ELSE -->{entries.REFERENCE_TYPE}<!-- ENDIF -->
+				</td>
+				<td>
+					<!-- IF not entries.IS_REVERSED and not entries.IS_REVERSAL -->
+						<a href="{entries.U_REVERSE}">{L_BBACCOUNTS_REVERSE}</a>
+					<!-- ENDIF -->
+				</td>
+			</tr>
+			<!-- END entries -->
+		</tbody>
+	</table>
+
+	<!-- IF .pagination -->
+		<div class="pagination">
+			{TOTAL} &bull; <!-- INCLUDE pagination.html -->
+		</div>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

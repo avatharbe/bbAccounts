@@ -1,0 +1,16 @@
+<!-- IF S_BBACCOUNTS_PORTAL_AUTHED -->
+	<!-- IF S_BBACCOUNTS_PORTAL_HAS_DATA -->
+		<ul class="bbaccounts-portal-pools">
+			<!-- BEGIN bbaccounts_portal_pools -->
+				<li<!-- IF bbaccounts_portal_pools.IS_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>
+					<strong>{bbaccounts_portal_pools.CURRENCY}</strong>
+					<span>{bbaccounts_portal_pools.BALANCE}</span>
+				</li>
+			<!-- END bbaccounts_portal_pools -->
+		</ul>
+	<!-- ELSE -->
+		<p class="explain">{L_BBACCOUNTS_PORTAL_NO_BALANCES}</p>
+	<!-- ENDIF -->
+<!-- ELSE -->
+	<p class="explain">{L_BBACCOUNTS_PORTAL_LOGIN_REQUIRED}</p>
+<!-- ENDIF -->

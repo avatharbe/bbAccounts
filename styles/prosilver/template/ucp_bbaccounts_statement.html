@@ -1,0 +1,136 @@
+<!-- INCLUDE ucp_header.html -->
+
+<link rel="stylesheet" type="text/css" href="ext/avathar/bbaccounts/styles/all/theme/bbaccounts.css">
+<!--
+	Flatpickr ships in two flavours; both are vendored under
+	styles/all/theme/. Swap dark <-> light by editing the line below.
+	The dark theme is the default because dark forum styles (pbwow3,
+	we_clearblue) are the common case in this install; switch to
+	flatpickr-light.min.css when running on prosilver / a light style.
+-->
+<link rel="stylesheet" type="text/css" href="ext/avathar/bbaccounts/styles/all/theme/flatpickr-dark.min.css">
+<script src="ext/avathar/bbaccounts/styles/all/template/flatpickr.min.js"></script>
+
+<h2>{L_UCP_BBACCOUNTS_STATEMENT}</h2>
+<p>{L_UCP_BBACCOUNTS_STATEMENT_EXPLAIN}</p>
+
+<form class="bbaccounts-form" method="get" action="{U_ACTION}">
+	<input type="hidden" name="i" value="-avathar-bbaccounts-ucp-main_module">
+	<input type="hidden" name="mode" value="statement">
+
+	<fieldset>
+		<legend>{L_UCP_BBACCOUNTS_STATEMENT_FILTER}</legend>
+		<dl>
+			<dt><label for="sl_from">{L_BBACCOUNTS_DATE_FROM}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_FROM_EXPLAIN}</span></dt>
+			<dd><input type="date" id="sl_from" name="from" value="{SL_FROM_ISO}"></dd>
+		</dl>
+		<dl>
+			<dt><label for="sl_to">{L_BBACCOUNTS_DATE_TO}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_TO_EXPLAIN}</span></dt>
+			<dd><input type="date" id="sl_to" name="to" value="{SL_TO_ISO}"></dd>
+		</dl>
+		<dl>
+			<dt><label for="sl_per_page">{L_BBACCOUNTS_PER_PAGE}{L_COLON}</label></dt>
+			<dd>
+				<select id="sl_per_page" name="per_page">
+					<option value="10"<!-- IF SL_PER_PAGE == 10 --> selected<!-- ENDIF -->>10</option>
+					<option value="25"<!-- IF SL_PER_PAGE == 25 --> selected<!-- ENDIF -->>25</option>
+					<option value="50"<!-- IF SL_PER_PAGE == 50 --> selected<!-- ENDIF -->>50</option>
+					<option value="100"<!-- IF SL_PER_PAGE == 100 --> selected<!-- ENDIF -->>100</option>
+				</select>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" value="{L_BBACCOUNTS_RUN}">
+	</fieldset>
+</form>
+
+<!-- IF S_HAS_SUMMARY -->
+	<h3>{L_UCP_BBACCOUNTS_STATEMENT_SUMMARY}</h3>
+
+	<table class="table1 zebra-table bbaccounts-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+				<th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+				<th>{L_BBACCOUNTS_CURRENCY}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_SL_OPENING}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_SL_CLOSING}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN sl_summary -->
+			<tr>
+				<td>{sl_summary.CODE}</td>
+				<td>{sl_summary.NAME}</td>
+				<td>{sl_summary.CURRENCY}</td>
+				<td style="text-align:right">{sl_summary.OPENING}</td>
+				<td style="text-align:right">{sl_summary.DEBIT}</td>
+				<td style="text-align:right">{sl_summary.CREDIT}</td>
+				<td style="text-align:right">{sl_summary.CLOSING}</td>
+			</tr>
+			<!-- END sl_summary -->
+		</tbody>
+	</table>
+<!-- ENDIF -->
+
+<!-- IF S_HAS_RESULTS -->
+	<h3>{L_BBACCOUNTS_SL_LINES}</h3>
+
+	<table class="table1 zebra-table bbaccounts-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_ENTRY_DATE}</th>
+				<th>{L_BBACCOUNTS_JOURNAL_ID}</th>
+				<th>{L_BBACCOUNTS_LINE_ACCOUNT}</th>
+				<th>{L_BBACCOUNTS_DESCRIPTION}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+				<th>{L_BBACCOUNTS_LINE_MEMO}</th>
+				<th>{L_BBACCOUNTS_REFERENCE}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN sl_lines -->
+			<tr>
+				<td>{sl_lines.ENTRY_DATE}</td>
+				<td>#{sl_lines.JOURNAL_ID}<!-- IF sl_lines.IS_REVERSAL --> <span class="badge">reversal</span><!-- ENDIF --></td>
+				<td>{sl_lines.ACCOUNT_CODE} {sl_lines.ACCOUNT_NAME}</td>
+				<td>{sl_lines.DESCRIPTION}</td>
+				<td style="text-align:right">{sl_lines.DEBIT}</td>
+				<td style="text-align:right">{sl_lines.CREDIT}</td>
+				<td>{sl_lines.MEMO}</td>
+				<td><!-- IF sl_lines.REFERENCE_SOURCE -->{sl_lines.REFERENCE_SOURCE}#{sl_lines.REFERENCE_ID}<!-- ELSE -->{sl_lines.REFERENCE_TYPE}<!-- ENDIF --></td>
+			</tr>
+			<!-- END sl_lines -->
+		</tbody>
+		<tfoot>
+			<tr>
+				<th colspan="4" style="text-align:right">{L_BBACCOUNTS_RANGE_TOTAL}</th>
+				<th style="text-align:right">{SL_TOTAL_DR}</th>
+				<th style="text-align:right">{SL_TOTAL_CR}</th>
+				<th colspan="2"></th>
+			</tr>
+		</tfoot>
+	</table>
+
+	<div class="pagination">
+		{L_BBACCOUNTS_TOTAL_ROWS}: {SL_TOTAL_ROWS}
+		<!-- INCLUDE pagination.html -->
+	</div>
+<!-- ELSE -->
+	<p class="explain">{L_UCP_BBACCOUNTS_STATEMENT_EMPTY}</p>
+<!-- ENDIF -->
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		if (typeof flatpickr === 'function') {
+			flatpickr('.bbaccounts-form input[type="date"]', { dateFormat: 'Y-m-d', allowInput: true });
+		}
+	});
+</script>
+
+<!-- INCLUDE ucp_footer.html -->

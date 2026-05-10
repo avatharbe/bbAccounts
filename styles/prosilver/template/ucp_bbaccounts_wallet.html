@@ -1,0 +1,35 @@
+<!-- INCLUDE ucp_header.html -->
+
+<link rel="stylesheet" type="text/css" href="ext/avathar/bbaccounts/styles/all/theme/bbaccounts.css">
+
+<h2>{L_UCP_BBACCOUNTS_WALLET}</h2>
+<p>{L_UCP_BBACCOUNTS_WALLET_EXPLAIN}</p>
+
+<!-- IF S_HAS_BALANCES -->
+	<table class="table1 zebra-table bbaccounts-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+				<th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+				<th>{L_BBACCOUNTS_CURRENCY}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_BALANCE}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN balances -->
+			<tr>
+				<td>{balances.CODE}</td>
+				<td>{balances.NAME}</td>
+				<td>{balances.CURRENCY}</td>
+				<td style="text-align:right"<!-- IF balances.IS_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>
+					{balances.CURRENCY} {balances.BALANCE}
+				</td>
+			</tr>
+			<!-- END balances -->
+		</tbody>
+	</table>
+<!-- ELSE -->
+	<p class="explain">{L_UCP_BBACCOUNTS_WALLET_EMPTY}</p>
+<!-- ENDIF -->
+
+<!-- INCLUDE ucp_footer.html -->

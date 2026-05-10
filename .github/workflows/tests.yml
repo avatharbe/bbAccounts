@@ -1,0 +1,42 @@
+name: Tests
+
+# Trimmed for free-tier minute budget. Routine main pushes + PRs run a
+# narrow matrix (PHP 8.1 only). The full PHP version sweep is reserved
+# for tag pushes — see tests-release.yml.
+#
+# paths-ignore short-circuits CI on commits that can't break the test
+# suite: docs, sample data, contrib/ assets. Language files + templates
+# still trigger CI because the functional smoke tests check rendered
+# text and template logic.
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '**.bbcode'
+      - '**.csv'
+      - 'contrib/**'
+      - '.gitignore'
+      - 'LICENSE*'
+      - 'license.txt'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '**.bbcode'
+      - '**.csv'
+      - 'contrib/**'
+      - '.gitignore'
+      - 'LICENSE*'
+      - 'license.txt'
+
+jobs:
+  test:
+    uses: phpbb-extensions/test-framework/.github/workflows/tests.yml@3.3.x
+    with:
+      EXTNAME: 'avathar/bbaccounts'
+      PRIMARY_PHP_VERSION: '8.1'
+      PHP_VERSION_MATRIX: '["8.1"]'
+      RUN_MSSQL_JOBS: 0

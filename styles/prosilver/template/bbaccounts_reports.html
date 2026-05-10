@@ -1,0 +1,447 @@
+<!-- INCLUDE overall_header.html -->
+
+<link rel="stylesheet" type="text/css" href="ext/avathar/bbaccounts/styles/all/theme/bbaccounts.css">
+<link rel="stylesheet" type="text/css" href="ext/avathar/bbaccounts/styles/all/theme/flatpickr-dark.min.css">
+<script src="ext/avathar/bbaccounts/styles/all/template/flatpickr.min.js"></script>
+
+<a id="maincontent"></a>
+
+<h1>{L_BBACCOUNTS_REPORTS_TITLE}</h1>
+
+<p class="bbaccounts-report-nav">
+    <a class="button2<!-- IF S_REPORT_TRIAL_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_TRIAL_BALANCE}">{L_BBACCOUNTS_REPORT_TRIAL_BALANCE}</a>
+    <a class="button2<!-- IF S_REPORT_ACCOUNT_LEDGER --> active<!-- ENDIF -->" href="{U_REPORT_ACCOUNT_LEDGER}">{L_BBACCOUNTS_REPORT_ACCOUNT_LEDGER}</a>
+    <a class="button2<!-- IF S_REPORT_SUBLEDGER --> active<!-- ENDIF -->" href="{U_REPORT_SUBLEDGER}">{L_BBACCOUNTS_REPORT_SUBLEDGER}</a>
+    <a class="button2<!-- IF S_REPORT_BALANCE_LOOKUP --> active<!-- ENDIF -->" href="{U_REPORT_BALANCE_LOOKUP}">{L_BBACCOUNTS_REPORT_BALANCE_LOOKUP}</a>
+    <a class="button2<!-- IF S_REPORT_USER_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_USER_BALANCE}">{L_BBACCOUNTS_REPORT_USER_BALANCE}</a>
+</p>
+
+<!-- IF S_REPORT_TRIAL_BALANCE -->
+
+<h2>{L_BBACCOUNTS_REPORT_TRIAL_BALANCE}</h2>
+
+<form class="bbaccounts-form" method="post" action="{U_REPORT_TRIAL_BALANCE}">
+    <fieldset>
+        <legend>{L_BBACCOUNTS_REPORT_FILTER}</legend>
+        <dl>
+            <dt><label for="as_of">{L_BBACCOUNTS_AS_OF}{L_COLON}</label><br /><span>{L_BBACCOUNTS_AS_OF_EXPLAIN}</span></dt>
+            <dd><input type="date" id="as_of" name="as_of" value="{AS_OF_ISO}"></dd>
+        </dl>
+        <dl>
+            <dt><label for="currency">{L_BBACCOUNTS_FILTER_CURRENCY}{L_COLON}</label><br /><span>{L_BBACCOUNTS_FILTER_CURRENCY_EXPLAIN}</span></dt>
+            <dd><input type="text" id="currency" name="currency" value="{CURRENCY_FILTER}" maxlength="8" placeholder="(all)"></dd>
+        </dl>
+        <p class="submit-buttons"><input class="button1" type="submit" value="{L_BBACCOUNTS_RUN}"></p>
+    </fieldset>
+</form>
+
+<!-- BEGIN pools -->
+    <h3>{L_BBACCOUNTS_TB_POOL}: {pools.CURRENCY}</h3>
+    <table class="table1 zebra-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+                <th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+                <th>{L_BBACCOUNTS_ACCOUNT_TYPE}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- BEGIN types -->
+                <tr class="bbaccounts-type-header">
+                    <th colspan="5" style="text-align:left">{pools.types.TYPE_LABEL}</th>
+                </tr>
+                <!-- BEGIN rows -->
+                <tr>
+                    <td>{pools.types.rows.CODE}</td>
+                    <td>{pools.types.rows.NAME}</td>
+                    <td>{pools.types.rows.TYPE}</td>
+                    <td style="text-align:right">{pools.types.rows.DEBIT}</td>
+                    <td style="text-align:right">{pools.types.rows.CREDIT}</td>
+                </tr>
+                <!-- END rows -->
+                <!-- BEGIN subtotal -->
+                <tr class="bbaccounts-subtotal">
+                    <th colspan="3" style="text-align:right">{L_BBACCOUNTS_TB_SUBTOTAL} — {pools.types.TYPE_LABEL}</th>
+                    <th style="text-align:right">{pools.types.subtotal.DR}</th>
+                    <th style="text-align:right">{pools.types.subtotal.CR}</th>
+                </tr>
+                <!-- END subtotal -->
+                <!-- IF pools.types.S_GROUP_END -->
+                <tr class="bbaccounts-group-subtotal">
+                    <th colspan="3" style="text-align:right">{pools.types.GROUP_LABEL}</th>
+                    <th style="text-align:right">{pools.types.GROUP_DR}</th>
+                    <th style="text-align:right">{pools.types.GROUP_CR}</th>
+                </tr>
+                <!-- ENDIF -->
+            <!-- END types -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">{L_BBACCOUNTS_TB_TOTAL}</th>
+                <th style="text-align:right">{pools.TOTAL_DR}</th>
+                <th style="text-align:right">{pools.TOTAL_CR}</th>
+            </tr>
+            <tr>
+                <th colspan="5"><!-- IF pools.BALANCED -->{L_BBACCOUNTS_TB_BALANCED}<!-- ELSE --><span class="error">{L_BBACCOUNTS_TB_UNBALANCED}</span><!-- ENDIF --></th>
+            </tr>
+        </tfoot>
+    </table>
+<!-- END pools -->
+
+<!-- ENDIF -->
+
+
+<!-- IF S_REPORT_ACCOUNT_LEDGER -->
+
+<h2>{L_BBACCOUNTS_REPORT_ACCOUNT_LEDGER}</h2>
+
+<form class="bbaccounts-form" method="post" action="{U_REPORT_ACCOUNT_LEDGER}">
+    <fieldset>
+        <legend>{L_BBACCOUNTS_REPORT_FILTER}</legend>
+        <dl>
+            <dt><label for="account_id">{L_BBACCOUNTS_AL_ACCOUNT}{L_COLON}</label><br /><span>{L_BBACCOUNTS_AL_ACCOUNT_EXPLAIN}</span></dt>
+            <dd>
+                <select id="account_id" name="account_id">
+                    <option value="0">—</option>
+                    <!-- BEGIN al_accounts -->
+                    <option value="{al_accounts.ID}"<!-- IF al_accounts.SELECTED --> selected<!-- ENDIF -->>{al_accounts.LABEL}</option>
+                    <!-- END al_accounts -->
+                </select>
+            </dd>
+        </dl>
+        <dl>
+            <dt><label for="al_from">{L_BBACCOUNTS_DATE_FROM}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_FROM_EXPLAIN}</span></dt>
+            <dd><input type="date" id="al_from" name="from" value="{AL_FROM_ISO}"></dd>
+        </dl>
+        <dl>
+            <dt><label for="al_to">{L_BBACCOUNTS_DATE_TO}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_TO_EXPLAIN}</span></dt>
+            <dd><input type="date" id="al_to" name="to" value="{AL_TO_ISO}"></dd>
+        </dl>
+        <dl>
+            <dt><label for="al_per_page">{L_BBACCOUNTS_PER_PAGE}{L_COLON}</label></dt>
+            <dd>
+                <select id="al_per_page" name="per_page">
+                    <option value="25"<!-- IF AL_PER_PAGE == 25 --> selected<!-- ENDIF -->>25</option>
+                    <option value="50"<!-- IF AL_PER_PAGE == 50 --> selected<!-- ENDIF -->>50</option>
+                    <option value="100"<!-- IF AL_PER_PAGE == 100 --> selected<!-- ENDIF -->>100</option>
+                </select>
+            </dd>
+        </dl>
+        <p class="submit-buttons"><input class="button1" type="submit" value="{L_BBACCOUNTS_RUN}"></p>
+    </fieldset>
+</form>
+
+<!-- IF S_AL_HAS_RESULTS -->
+    <h3>{AL_HEADER_CODE} {AL_HEADER_NAME} <span class="badge">{AL_HEADER_TYPE}</span> <span class="badge">{AL_HEADER_CUR}</span></h3>
+
+    <table class="table1 zebra-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_ENTRY_DATE}</th>
+                <th>{L_BBACCOUNTS_JOURNAL_ID}</th>
+                <th>{L_BBACCOUNTS_DESCRIPTION}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+                <th>{L_BBACCOUNTS_LINE_USER}</th>
+                <th>{L_BBACCOUNTS_LINE_MEMO}</th>
+                <th>{L_BBACCOUNTS_REFERENCE}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- BEGIN al_lines -->
+            <tr>
+                <td>{al_lines.ENTRY_DATE}</td>
+                <td>#{al_lines.JOURNAL_ID}<!-- IF al_lines.IS_REVERSAL --> <span class="badge">reversal</span><!-- ENDIF --></td>
+                <td>{al_lines.DESCRIPTION}</td>
+                <td style="text-align:right">{al_lines.DEBIT}</td>
+                <td style="text-align:right">{al_lines.CREDIT}</td>
+                <td>{al_lines.SUBLEDGER_USER}</td>
+                <td>{al_lines.MEMO}</td>
+                <td><!-- IF al_lines.REFERENCE_SOURCE -->{al_lines.REFERENCE_SOURCE}#{al_lines.REFERENCE_ID}<!-- ELSE -->{al_lines.REFERENCE_TYPE}<!-- ENDIF --></td>
+            </tr>
+            <!-- END al_lines -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" style="text-align:right">{L_BBACCOUNTS_PAGE_TOTAL}</th>
+                <th style="text-align:right">{AL_PAGE_DR}</th>
+                <th style="text-align:right">{AL_PAGE_CR}</th>
+                <th colspan="3"></th>
+            </tr>
+            <tr>
+                <th colspan="3" style="text-align:right">{L_BBACCOUNTS_RANGE_TOTAL}</th>
+                <th style="text-align:right">{AL_TOTAL_DR}</th>
+                <th style="text-align:right">{AL_TOTAL_CR}</th>
+                <th colspan="3"></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p>
+        {L_BBACCOUNTS_TOTAL_ROWS}: {AL_TOTAL_ROWS} &nbsp;|&nbsp;
+        {L_BBACCOUNTS_PAGE} {AL_PAGE} / {AL_TOTAL_PAGES}
+        <!-- IF S_AL_HAS_PREV --> &nbsp; <a class="button2" href="{U_AL_PREV}">{L_BBACCOUNTS_PREVIOUS}</a><!-- ENDIF -->
+        <!-- IF S_AL_HAS_NEXT --> &nbsp; <a class="button2" href="{U_AL_NEXT}">{L_BBACCOUNTS_NEXT}</a><!-- ENDIF -->
+    </p>
+<!-- ENDIF -->
+
+<!-- ENDIF -->
+
+
+<!-- IF S_REPORT_SUBLEDGER -->
+
+<h2>{L_BBACCOUNTS_REPORT_SUBLEDGER}</h2>
+
+<form class="bbaccounts-form" method="post" action="{U_REPORT_SUBLEDGER}">
+    <fieldset>
+        <legend>{L_BBACCOUNTS_REPORT_FILTER}</legend>
+        <dl>
+            <dt><label for="user_id">{L_BBACCOUNTS_SL_USER}{L_COLON}</label><br /><span>{L_BBACCOUNTS_SL_USER_EXPLAIN}</span></dt>
+            <dd><input type="number" id="user_id" name="user_id" value="{SL_USER_ID}" min="0"></dd>
+        </dl>
+        <dl>
+            <dt><label for="sl_from">{L_BBACCOUNTS_DATE_FROM}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_FROM_EXPLAIN}</span></dt>
+            <dd><input type="date" id="sl_from" name="from" value="{SL_FROM_ISO}"></dd>
+        </dl>
+        <dl>
+            <dt><label for="sl_to">{L_BBACCOUNTS_DATE_TO}{L_COLON}</label><br /><span>{L_BBACCOUNTS_DATE_TO_EXPLAIN}</span></dt>
+            <dd><input type="date" id="sl_to" name="to" value="{SL_TO_ISO}"></dd>
+        </dl>
+        <dl>
+            <dt><label for="sl_per_page">{L_BBACCOUNTS_PER_PAGE}{L_COLON}</label></dt>
+            <dd>
+                <select id="sl_per_page" name="per_page">
+                    <option value="25"<!-- IF SL_PER_PAGE == 25 --> selected<!-- ENDIF -->>25</option>
+                    <option value="50"<!-- IF SL_PER_PAGE == 50 --> selected<!-- ENDIF -->>50</option>
+                    <option value="100"<!-- IF SL_PER_PAGE == 100 --> selected<!-- ENDIF -->>100</option>
+                </select>
+            </dd>
+        </dl>
+        <p class="submit-buttons"><input class="button1" type="submit" value="{L_BBACCOUNTS_RUN}"></p>
+    </fieldset>
+</form>
+
+<!-- IF S_SL_HAS_RESULTS -->
+    <h3>{L_BBACCOUNTS_SL_USER}: {SL_USERNAME} (#{SL_USER_ID})</h3>
+
+    <table class="table1 zebra-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+                <th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+                <th>{L_BBACCOUNTS_CURRENCY}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_SL_OPENING}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_SL_CLOSING}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- BEGIN sl_summary -->
+            <tr>
+                <td>{sl_summary.CODE}</td>
+                <td>{sl_summary.NAME}</td>
+                <td>{sl_summary.CURRENCY}</td>
+                <td style="text-align:right">{sl_summary.OPENING}</td>
+                <td style="text-align:right">{sl_summary.DEBIT}</td>
+                <td style="text-align:right">{sl_summary.CREDIT}</td>
+                <td style="text-align:right">{sl_summary.CLOSING}</td>
+            </tr>
+            <!-- END sl_summary -->
+        </tbody>
+    </table>
+
+    <h3>{L_BBACCOUNTS_SL_LINES}</h3>
+
+    <table class="table1 zebra-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_ENTRY_DATE}</th>
+                <th>{L_BBACCOUNTS_JOURNAL_ID}</th>
+                <th>{L_BBACCOUNTS_LINE_ACCOUNT}</th>
+                <th>{L_BBACCOUNTS_DESCRIPTION}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+                <th>{L_BBACCOUNTS_LINE_MEMO}</th>
+                <th>{L_BBACCOUNTS_REFERENCE}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- BEGIN sl_lines -->
+            <tr>
+                <td>{sl_lines.ENTRY_DATE}</td>
+                <td>#{sl_lines.JOURNAL_ID}<!-- IF sl_lines.IS_REVERSAL --> <span class="badge">reversal</span><!-- ENDIF --></td>
+                <td>{sl_lines.ACCOUNT_CODE} {sl_lines.ACCOUNT_NAME}</td>
+                <td>{sl_lines.DESCRIPTION}</td>
+                <td style="text-align:right">{sl_lines.DEBIT}</td>
+                <td style="text-align:right">{sl_lines.CREDIT}</td>
+                <td>{sl_lines.MEMO}</td>
+                <td><!-- IF sl_lines.REFERENCE_SOURCE -->{sl_lines.REFERENCE_SOURCE}#{sl_lines.REFERENCE_ID}<!-- ELSE -->{sl_lines.REFERENCE_TYPE}<!-- ENDIF --></td>
+            </tr>
+            <!-- END sl_lines -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="4" style="text-align:right">{L_BBACCOUNTS_RANGE_TOTAL}</th>
+                <th style="text-align:right">{SL_TOTAL_DR}</th>
+                <th style="text-align:right">{SL_TOTAL_CR}</th>
+                <th colspan="2"></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p>
+        {L_BBACCOUNTS_TOTAL_ROWS}: {SL_TOTAL_ROWS} &nbsp;|&nbsp;
+        {L_BBACCOUNTS_PAGE} {SL_PAGE} / {SL_TOTAL_PAGES}
+        <!-- IF S_SL_HAS_PREV --> &nbsp; <a class="button2" href="{U_SL_PREV}">{L_BBACCOUNTS_PREVIOUS}</a><!-- ENDIF -->
+        <!-- IF S_SL_HAS_NEXT --> &nbsp; <a class="button2" href="{U_SL_NEXT}">{L_BBACCOUNTS_NEXT}</a><!-- ENDIF -->
+    </p>
+<!-- ENDIF -->
+
+<!-- ENDIF -->
+
+<!-- IF S_REPORT_BALANCE_LOOKUP -->
+
+<h2>{L_BBACCOUNTS_REPORT_BALANCE_LOOKUP}</h2>
+<p class="explain">{L_BBACCOUNTS_REPORT_BALANCE_LOOKUP_EXPLAIN}</p>
+
+<!-- IF BAL_LOOKUP_ERROR -->
+    <p class="error">{BAL_LOOKUP_ERROR}</p>
+<!-- ENDIF -->
+
+<form class="bbaccounts-form" method="post" action="{U_BAL_LOOKUP_ACTION}">
+    <fieldset>
+        <legend>{L_BBACCOUNTS_REPORT_FILTER}</legend>
+        <dl>
+            <dt><label for="bal_account_id">{L_BBACCOUNTS_LINE_ACCOUNT}{L_COLON}</label></dt>
+            <dd>
+                <select id="bal_account_id" name="account_id">
+                    <option value="0">—</option>
+                    <!-- BEGIN bal_currencies -->
+                        <optgroup label="{bal_currencies.CURRENCY}">
+                            <!-- BEGIN accounts -->
+                            <option value="{bal_currencies.accounts.ID}"<!-- IF bal_currencies.accounts.SELECTED --> selected<!-- ENDIF -->>{bal_currencies.accounts.LABEL}</option>
+                            <!-- END accounts -->
+                        </optgroup>
+                    <!-- END bal_currencies -->
+                </select>
+            </dd>
+        </dl>
+        <dl>
+            <dt><label for="bal_as_of">{L_BBACCOUNTS_AS_OF}{L_COLON}</label><br /><span>{L_BBACCOUNTS_AS_OF_EXPLAIN}</span></dt>
+            <dd><input type="date" id="bal_as_of" name="as_of" value="{BAL_AS_OF_ISO}"></dd>
+        </dl>
+        <p class="submit-buttons">
+            <input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_BALANCE_LOOKUP_BUTTON}">
+        </p>
+        {S_FORM_TOKEN}
+    </fieldset>
+</form>
+
+<!-- IF S_BAL_LOOKUP_RESULT -->
+    <table class="table1 zebra-table bbaccounts-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_LINE_ACCOUNT}</th>
+                <th>{L_BBACCOUNTS_ACCOUNT_TYPE}</th>
+                <th>{L_BBACCOUNTS_CURRENCY}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_BALANCE}</th>
+                <th>{L_BBACCOUNTS_AS_OF}</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{BAL_LOOKUP_ACCOUNT}</td>
+                <td>{BAL_LOOKUP_TYPE}</td>
+                <td>{BAL_LOOKUP_CURRENCY}</td>
+                <td style="text-align:right"<!-- IF BAL_LOOKUP_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>{BAL_LOOKUP_CURRENCY} {BAL_LOOKUP_BALANCE}</td>
+                <td>{BAL_LOOKUP_AS_OF}</td>
+                <td><!-- IF BAL_LOOKUP_ABNORMAL --><span class="error">{L_BBACCOUNTS_BALANCE_LOOKUP_ABNORMAL_BADGE}</span><!-- ENDIF --></td>
+            </tr>
+        </tbody>
+    </table>
+<!-- ENDIF -->
+
+<!-- ENDIF -->
+
+<!-- IF S_REPORT_USER_BALANCE -->
+
+<h2>{L_BBACCOUNTS_REPORT_USER_BALANCE}</h2>
+<p class="explain">{L_BBACCOUNTS_REPORT_USER_BALANCE_EXPLAIN}</p>
+
+<!-- IF LOOKUP_ERROR -->
+    <p class="error">{LOOKUP_ERROR}</p>
+<!-- ENDIF -->
+
+<form class="bbaccounts-form" method="post" action="{U_LOOKUP_ACTION}">
+    <fieldset>
+        <legend>{L_BBACCOUNTS_REPORT_FILTER}</legend>
+        <dl>
+            <dt><label for="account_id">{L_BBACCOUNTS_LINE_ACCOUNT}{L_COLON}</label></dt>
+            <dd>
+                <select id="account_id" name="account_id">
+                    <option value="0">—</option>
+                    <!-- BEGIN lookup_currencies -->
+                        <optgroup label="{lookup_currencies.CURRENCY}">
+                            <!-- BEGIN accounts -->
+                            <option value="{lookup_currencies.accounts.ID}"<!-- IF lookup_currencies.accounts.SELECTED --> selected<!-- ENDIF -->>{lookup_currencies.accounts.LABEL}</option>
+                            <!-- END accounts -->
+                        </optgroup>
+                    <!-- END lookup_currencies -->
+                </select>
+            </dd>
+        </dl>
+        <dl>
+            <dt><label for="username">{L_BBACCOUNTS_USER_BALANCE_USERNAME}{L_COLON}</label></dt>
+            <dd><input type="text" id="username" name="username" value="{USERNAME}" size="30"></dd>
+        </dl>
+        <dl>
+            <dt><label for="as_of">{L_BBACCOUNTS_AS_OF}{L_COLON}</label><br /><span>{L_BBACCOUNTS_AS_OF_EXPLAIN}</span></dt>
+            <dd><input type="date" id="as_of" name="as_of" value="{AS_OF_ISO}"></dd>
+        </dl>
+        <p class="submit-buttons">
+            <input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_USER_BALANCE_LOOKUP}">
+        </p>
+        {S_FORM_TOKEN}
+    </fieldset>
+</form>
+
+<!-- IF S_LOOKUP_RESULT -->
+    <table class="table1 zebra-table bbaccounts-table">
+        <thead>
+            <tr>
+                <th>{L_BBACCOUNTS_USER_BALANCE_USERNAME}</th>
+                <th>{L_BBACCOUNTS_LINE_ACCOUNT}</th>
+                <th>{L_BBACCOUNTS_CURRENCY}</th>
+                <th style="text-align:right">{L_BBACCOUNTS_BALANCE}</th>
+                <th>{L_BBACCOUNTS_AS_OF}</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{LOOKUP_USERNAME}</td>
+                <td>{LOOKUP_ACCOUNT}</td>
+                <td>{LOOKUP_CURRENCY}</td>
+                <td style="text-align:right"<!-- IF LOOKUP_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>{LOOKUP_CURRENCY} {LOOKUP_BALANCE}</td>
+                <td>{LOOKUP_AS_OF}</td>
+                <td><!-- IF LOOKUP_ABNORMAL --><span class="error">{L_BBACCOUNTS_USER_BALANCE_ABNORMAL_BADGE}</span><!-- ENDIF --></td>
+            </tr>
+        </tbody>
+    </table>
+<!-- ENDIF -->
+
+<!-- ENDIF -->
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		if (typeof flatpickr === 'function') {
+			flatpickr('.bbaccounts-form input[type="date"]', { dateFormat: 'Y-m-d', allowInput: true });
+		}
+	});
+</script>
+
+<!-- INCLUDE overall_footer.html -->

@@ -1,0 +1,61 @@
+entry_ref,entry_date,description,account_code,debit,credit,subledger_user_id,memo,reference_type,reference_source,reference_id
+T01,2026-04-01,Welcome bonus,5000,50.00,0,0,Welcome bonus to user 63,manual,bbaccounts.manual,0
+T01,2026-04-01,Welcome bonus,2100,0,50.00,63,Welcome bonus,manual,bbaccounts.manual,0
+T02,2026-04-02,Daily login bonus,5000,5.00,0,0,Daily login,manual,bbaccounts.manual,0
+T02,2026-04-02,Daily login bonus,2100,0,5.00,63,Daily login,manual,bbaccounts.manual,0
+T03,2026-04-03,First post bonus,5000,25.00,0,0,First post,manual,bbaccounts.manual,0
+T03,2026-04-03,First post bonus,2100,0,25.00,63,First post,manual,bbaccounts.manual,0
+T04,2026-04-04,Forum activity reward,5000,10.00,0,0,Activity,manual,bbaccounts.manual,0
+T04,2026-04-04,Forum activity reward,2100,0,10.00,63,Activity reward,manual,bbaccounts.manual,0
+T05,2026-04-05,Raid attendance bonus,5000,100.00,0,0,Raid 12 attendance,manual,bbaccounts.manual,0
+T05,2026-04-05,Raid attendance bonus,2100,0,100.00,63,Raid 12 attendance,manual,bbaccounts.manual,0
+T06,2026-04-06,Lottery ticket purchase,2100,5.00,0,63,Lottery ticket,manual,bbaccounts.manual,0
+T06,2026-04-06,Lottery ticket purchase,4000,0,5.00,0,Lottery revenue,manual,bbaccounts.manual,0
+T07,2026-04-07,Profile customisation fee,2100,20.00,0,63,Custom title,manual,bbaccounts.manual,0
+T07,2026-04-07,Profile customisation fee,4000,0,20.00,0,Cosmetic revenue,manual,bbaccounts.manual,0
+T08,2026-04-08,Tournament prize,5000,200.00,0,0,Tournament 1st place,manual,bbaccounts.manual,0
+T08,2026-04-08,Tournament prize,2100,0,200.00,63,Tournament prize,manual,bbaccounts.manual,0
+T09,2026-04-09,Avatar frame purchase,2100,30.00,0,63,Gold frame,manual,bbaccounts.manual,0
+T09,2026-04-09,Avatar frame purchase,4000,0,30.00,0,Cosmetic revenue,manual,bbaccounts.manual,0
+T10,2026-04-10,Weekly attendance bonus,5000,15.00,0,0,Week 14 streak,manual,bbaccounts.manual,0
+T10,2026-04-10,Weekly attendance bonus,2100,0,15.00,63,Week 14 streak,manual,bbaccounts.manual,0
+T11,2026-04-11,Robbery loss,2100,10.00,0,63,Robbed by user 42,manual,bbaccounts.manual,0
+T11,2026-04-11,Robbery loss,4000,0,10.00,0,Robbery sink,manual,bbaccounts.manual,0
+T12,2026-04-12,Mystery box reward,5000,50.00,0,0,Mystery box drop,manual,bbaccounts.manual,0
+T12,2026-04-12,Mystery box reward,2100,0,50.00,63,Mystery box,manual,bbaccounts.manual,0
+T13,2026-04-13,Forum title purchase,2100,75.00,0,63,Veteran title,manual,bbaccounts.manual,0
+T13,2026-04-13,Forum title purchase,4000,0,75.00,0,Title revenue,manual,bbaccounts.manual,0
+T14,2026-04-14,Login streak bonus (7 days),5000,35.00,0,0,7-day streak,manual,bbaccounts.manual,0
+T14,2026-04-14,Login streak bonus (7 days),2100,0,35.00,63,7-day streak,manual,bbaccounts.manual,0
+T15,2026-04-15,Mid-month bonus,5000,30.00,0,0,Mid-month,manual,bbaccounts.manual,0
+T15,2026-04-15,Mid-month bonus,2100,0,30.00,63,Mid-month bonus,manual,bbaccounts.manual,0
+T16,2026-04-16,Gift box purchase,2100,25.00,0,63,Gift box,manual,bbaccounts.manual,0
+T16,2026-04-16,Gift box purchase,4000,0,25.00,0,Gift revenue,manual,bbaccounts.manual,0
+T17,2026-04-17,Quiz reward,5000,40.00,0,0,Trivia quiz win,manual,bbaccounts.manual,0
+T17,2026-04-17,Quiz reward,2100,0,40.00,63,Quiz win,manual,bbaccounts.manual,0
+T18,2026-04-18,Theme unlock,2100,100.00,0,63,Dark theme premium,manual,bbaccounts.manual,0
+T18,2026-04-18,Theme unlock,4000,0,100.00,0,Theme revenue,manual,bbaccounts.manual,0
+T19,2026-04-19,Helpful answer reward,5000,20.00,0,0,Best answer,manual,bbaccounts.manual,0
+T19,2026-04-19,Helpful answer reward,2100,0,20.00,63,Best answer,manual,bbaccounts.manual,0
+T20,2026-04-20,Raid attendance,5000,100.00,0,0,Raid 13 attendance,manual,bbaccounts.manual,0
+T20,2026-04-20,Raid attendance,2100,0,100.00,63,Raid 13 attendance,manual,bbaccounts.manual,0
+T21,2026-04-21,Loot drop bonus,5000,60.00,0,0,Loot drop,manual,bbaccounts.manual,0
+T21,2026-04-21,Loot drop bonus,2100,0,60.00,63,Loot drop,manual,bbaccounts.manual,0
+T22,2026-04-22,Vendor item,2100,45.00,0,63,Potion bundle,manual,bbaccounts.manual,0
+T22,2026-04-22,Vendor item,4000,0,45.00,0,Vendor revenue,manual,bbaccounts.manual,0
+T23,2026-04-23,Achievement bonus,5000,50.00,0,0,First-blood achievement,manual,bbaccounts.manual,0
+T23,2026-04-23,Achievement bonus,2100,0,50.00,63,Achievement,manual,bbaccounts.manual,0
+T24,2026-04-24,Sticker pack,2100,15.00,0,63,Sticker pack,manual,bbaccounts.manual,0
+T24,2026-04-24,Sticker pack,4000,0,15.00,0,Sticker revenue,manual,bbaccounts.manual,0
+T25,2026-04-25,Patreon supporter match,5000,80.00,0,0,Patreon match,manual,bbaccounts.manual,0
+T25,2026-04-25,Patreon supporter match,2100,0,80.00,63,Patreon match,manual,bbaccounts.manual,0
+T26,2026-04-26,Banner customisation,2100,50.00,0,63,Custom banner,manual,bbaccounts.manual,0
+T26,2026-04-26,Banner customisation,4000,0,50.00,0,Cosmetic revenue,manual,bbaccounts.manual,0
+T27,2026-04-27,Birthday gift,5000,100.00,0,0,Birthday,manual,bbaccounts.manual,0
+T27,2026-04-27,Birthday gift,2100,0,100.00,63,Birthday gift,manual,bbaccounts.manual,0
+T28,2026-04-28,Forum store purchase,2100,35.00,0,63,Store item,manual,bbaccounts.manual,0
+T28,2026-04-28,Forum store purchase,4000,0,35.00,0,Store revenue,manual,bbaccounts.manual,0
+T29,2026-04-29,Monthly bonus,5000,75.00,0,0,Monthly,manual,bbaccounts.manual,0
+T29,2026-04-29,Monthly bonus,2100,0,75.00,63,Monthly bonus,manual,bbaccounts.manual,0
+T30,2026-04-30,Charity contribution,2100,10.00,0,63,Charity drive,manual,bbaccounts.manual,0
+T30,2026-04-30,Charity contribution,4000,0,10.00,0,Charity revenue,manual,bbaccounts.manual,0

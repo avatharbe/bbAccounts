@@ -1,0 +1,5 @@
+parameters:
+    avathar.bbaccounts.tables.accounts: '%core.table_prefix%bbaccounts_accounts'
+    avathar.bbaccounts.tables.journal: '%core.table_prefix%bbaccounts_journal'
+    avathar.bbaccounts.tables.journal_lines: '%core.table_prefix%bbaccounts_journal_lines'
+    avathar.bbaccounts.tables.currencies: '%core.table_prefix%bbaccounts_currencies'

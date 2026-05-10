@@ -1,0 +1,8 @@
+<!-- IF S_BBACCOUNTS_PROFILE_BADGE -->
+<dt>{L_BBACCOUNTS_PROFILE_BADGE_HEADING}{L_COLON}</dt>
+<dd>
+	<!-- BEGIN bbaccounts_pool_balances -->
+		<span<!-- IF bbaccounts_pool_balances.IS_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>{bbaccounts_pool_balances.CURRENCY} {bbaccounts_pool_balances.BALANCE}</span><!-- IF not bbaccounts_pool_balances.S_LAST_ROW --> &middot; <!-- ENDIF -->
+	<!-- END bbaccounts_pool_balances -->
+</dd>
+<!-- ENDIF -->

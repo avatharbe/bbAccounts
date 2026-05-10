@@ -1,0 +1,7 @@
+avathar_bbaccounts_reports:
+    path: /bbaccounts/reports/{report}
+    defaults:
+        _controller: avathar.bbaccounts.controller.main:handle
+        report: trial_balance
+    requirements:
+        report: trial_balance|account_ledger|subledger|balance_lookup|user_balance_lookup

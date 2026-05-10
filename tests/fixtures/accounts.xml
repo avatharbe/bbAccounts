@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+	<table name="phpbb_bbaccounts_currencies">
+		<column>currency_code</column>
+		<column>currency_name</column>
+		<column>is_active</column>
+		<row>
+			<value>POINTS</value>
+			<value>Forum points</value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>GOLD</value>
+			<value>Gold</value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>RETIRED</value>
+			<value>Retired pool</value>
+			<value>0</value>
+		</row>
+	</table>
+	<table name="phpbb_bbaccounts_accounts">
+		<column>account_id</column>
+		<column>account_code</column>
+		<column>account_name</column>
+		<column>account_type</column>
+		<column>parent_id</column>
+		<column>currency_code</column>
+		<column>subledger_type</column>
+		<column>is_active</column>
+		<row>
+			<value>1</value>
+			<value>1010</value>
+			<value>Cash on Hand</value>
+			<value>asset</value>
+			<value>0</value>
+			<value>POINTS</value>
+			<value></value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>2100</value>
+			<value>User Wallets</value>
+			<value>liability</value>
+			<value>0</value>
+			<value>POINTS</value>
+			<value>customer</value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>5050</value>
+			<value>Points Granted - Admin</value>
+			<value>expense</value>
+			<value>0</value>
+			<value>POINTS</value>
+			<value></value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>2200</value>
+			<value>Gold Wallets</value>
+			<value>liability</value>
+			<value>0</value>
+			<value>GOLD</value>
+			<value>customer</value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>5</value>
+			<value>9999</value>
+			<value>Inactive Account</value>
+			<value>expense</value>
+			<value>0</value>
+			<value>POINTS</value>
+			<value></value>
+			<value>0</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>6500</value>
+			<value>Gold Treasury</value>
+			<value>asset</value>
+			<value>0</value>
+			<value>GOLD</value>
+			<value></value>
+			<value>1</value>
+		</row>
+	</table>
+	<table name="phpbb_bbaccounts_journal">
+		<column>journal_id</column>
+	</table>
+	<table name="phpbb_bbaccounts_journal_lines">
+		<column>line_id</column>
+	</table>
+</dataset>

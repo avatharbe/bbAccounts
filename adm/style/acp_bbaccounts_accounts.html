@@ -1,0 +1,137 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_BBACCOUNTS_ACCOUNTS_TITLE}</h1>
+
+<!-- IF S_ACTION_FORM -->
+	<form id="bbaccounts_account_form" method="post" action="{U_ACTION}">
+
+		<fieldset>
+			<legend><!-- IF S_IS_EDIT -->{L_BBACCOUNTS_EDIT_ACCOUNT}<!-- ELSE -->{L_BBACCOUNTS_ADD_ACCOUNT}<!-- ENDIF --></legend>
+
+			<!-- IF S_IS_LOCKED -->
+				<p class="error">{L_BBACCOUNTS_ACCOUNT_LOCKED}</p>
+			<!-- ENDIF -->
+
+			<dl>
+				<dt><label for="account_code">{L_BBACCOUNTS_ACCOUNT_CODE}:</label><br /><span>{L_BBACCOUNTS_ACCOUNT_CODE_EXPLAIN}</span></dt>
+				<dd><input type="text" id="account_code" name="account_code" value="{ACCOUNT_CODE}"<!-- IF S_IS_LOCKED --> readonly<!-- ENDIF -->></dd>
+			</dl>
+
+			<dl>
+				<dt><label for="account_name">{L_BBACCOUNTS_ACCOUNT_NAME}:</label><br /><span>{L_BBACCOUNTS_ACCOUNT_NAME_EXPLAIN}</span></dt>
+				<dd><input type="text" id="account_name" name="account_name" value="{ACCOUNT_NAME}"></dd>
+			</dl>
+
+			<dl>
+				<dt><label for="account_type">{L_BBACCOUNTS_ACCOUNT_TYPE}:</label><br /><span>{L_BBACCOUNTS_ACCOUNT_TYPE_EXPLAIN}</span></dt>
+				<dd>
+					<select id="account_type" name="account_type"<!-- IF S_IS_LOCKED --> disabled<!-- ENDIF -->>
+						<option value="asset"<!-- IF ACCOUNT_TYPE == 'asset' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_TYPE_ASSET}</option>
+						<option value="liability"<!-- IF ACCOUNT_TYPE == 'liability' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_TYPE_LIABILITY}</option>
+						<option value="equity"<!-- IF ACCOUNT_TYPE == 'equity' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_TYPE_EQUITY}</option>
+						<option value="revenue"<!-- IF ACCOUNT_TYPE == 'revenue' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_TYPE_REVENUE}</option>
+						<option value="expense"<!-- IF ACCOUNT_TYPE == 'expense' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_TYPE_EXPENSE}</option>
+					</select>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt><label for="currency_code">{L_BBACCOUNTS_CURRENCY}:</label><br /><span>{L_BBACCOUNTS_CURRENCY_EXPLAIN}</span></dt>
+				<dd>
+					<select id="currency_code" name="currency_code"<!-- IF S_IS_LOCKED --> disabled<!-- ENDIF -->>
+						<!-- BEGIN currencies -->
+						<option value="{currencies.CODE}"<!-- IF currencies.SELECTED --> selected<!-- ENDIF -->>{currencies.CODE} — {currencies.NAME}</option>
+						<!-- END currencies -->
+					</select>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt><label for="subledger_type">{L_BBACCOUNTS_SUBLEDGER_TYPE}:</label><br /><span>{L_BBACCOUNTS_SUBLEDGER_TYPE_EXPLAIN}</span></dt>
+				<dd>
+					<select id="subledger_type" name="subledger_type"<!-- IF S_IS_LOCKED --> disabled<!-- ENDIF -->>
+						<option value=""<!-- IF SUBLEDGER_TYPE == '' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_SUBLEDGER_NONE}</option>
+						<option value="customer"<!-- IF SUBLEDGER_TYPE == 'customer' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_SUBLEDGER_CUSTOMER}</option>
+						<option value="supplier"<!-- IF SUBLEDGER_TYPE == 'supplier' --> selected<!-- ENDIF -->>{L_BBACCOUNTS_SUBLEDGER_SUPPLIER}</option>
+					</select>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt><label for="parent_id">{L_BBACCOUNTS_PARENT}:</label><br /><span>{L_BBACCOUNTS_PARENT_EXPLAIN}</span></dt>
+				<dd>
+					<select id="parent_id" name="parent_id">
+						<option value="0">— (top-level)</option>
+						<!-- BEGIN parents -->
+						<option value="{parents.ID}"<!-- IF parents.SELECTED --> selected<!-- ENDIF -->>{parents.NAME}</option>
+						<!-- END parents -->
+					</select>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt><label for="is_active">{L_BBACCOUNTS_IS_ACTIVE}:</label><br /><span>{L_BBACCOUNTS_IS_ACTIVE_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" id="is_active" name="is_active" value="1"<!-- IF IS_ACTIVE --> checked<!-- ENDIF -->></dd>
+			</dl>
+
+			<p class="submit-buttons">
+				<input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_SUBMIT}">
+				<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+			</p>
+
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+<!-- ELSE -->
+	<p><a class="button2" href="{U_ADD}">{L_BBACCOUNTS_ADD_ACCOUNT}</a></p>
+
+	<!-- IF .pagination -->
+		<div class="pagination top-pagination">
+			{TOTAL} &bull; <!-- INCLUDE pagination.html -->
+		</div>
+	<!-- ELSE -->
+		<div class="pagination top-pagination">{TOTAL}</div>
+	<!-- ENDIF -->
+
+	<table class="table1 zebra-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+				<th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+				<th>{L_BBACCOUNTS_ACCOUNT_TYPE}</th>
+				<th>{L_BBACCOUNTS_CURRENCY}</th>
+				<th>{L_BBACCOUNTS_SUBLEDGER_TYPE}</th>
+				<th style="text-align:right">{L_BBACCOUNTS_BALANCE}</th>
+				<th>{L_BBACCOUNTS_IS_ACTIVE}</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN accounts -->
+			<tr>
+				<td>{accounts.CODE}</td>
+				<td>{accounts.NAME}</td>
+				<td>{accounts.TYPE}</td>
+				<td>{accounts.CURRENCY}</td>
+				<td>{accounts.SUBLEDGER}</td>
+				<td style="text-align:right"<!-- IF accounts.IS_ABNORMAL --> class="error" title="{L_BBACCOUNTS_BALANCE_ABNORMAL}"<!-- ENDIF -->>{accounts.CURRENCY} {accounts.BALANCE}</td>
+				<td><!-- IF accounts.IS_ACTIVE -->&#10003;<!-- ELSE -->&#10007;<!-- ENDIF --></td>
+				<td>
+					<a href="{accounts.U_EDIT}">{L_BBACCOUNTS_EDIT_ACCOUNT}</a>
+					| <a href="{accounts.U_TOGGLE}"><!-- IF accounts.IS_ACTIVE -->{L_BBACCOUNTS_DISABLE}<!-- ELSE -->{L_BBACCOUNTS_ENABLE}<!-- ENDIF --></a>
+				</td>
+			</tr>
+			<!-- END accounts -->
+		</tbody>
+	</table>
+
+	<!-- IF .pagination -->
+		<div class="pagination">
+			{TOTAL} &bull; <!-- INCLUDE pagination.html -->
+		</div>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

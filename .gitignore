@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+*.swo
+*.bak
+.idea/
+.vscode/
+.phpunit.result.cache
+.claude/
+contrib/plans
+contrib/specs
+CLAUDE.md

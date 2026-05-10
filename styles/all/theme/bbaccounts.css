@@ -1,0 +1,181 @@
+/* bbAccounts — defensive CSS overrides
+ *
+ * prosilver's stock `.table1 tbody tr:hover` uses a light-blue
+ * highlight (`#ECF6F8`). On dark styles that override the table
+ * background to dark + the text to white, the hover state collides
+ * with the prosilver inheritance and the row goes light-blue with
+ * white text — unreadable. Neutralise the hover effect on bbAccounts
+ * tables: keep the row's normal background, no recolour on hover.
+ */
+.bbaccounts-table tbody tr:hover,
+.bbaccounts-table tbody tr:nth-child(odd):hover,
+.bbaccounts-table tbody tr:nth-child(even):hover {
+	background: inherit;
+	color: inherit;
+}
+
+/* Greenbar zebra striping — the classic continuous-form / accordion-
+ * paper look from the matrix-printer era. rgba so the tint composites
+ * over whatever the active style sets as the base row colour: pale
+ * green on light styles, subtle green-tinted dark on dark styles. The
+ * `!important` overrides prosilver's own zebra-table odd/even colour
+ * which is too subtle to read on most dark themes.
+ */
+.bbaccounts-table tbody tr:nth-child(even) {
+	background-color: rgba(120, 180, 100, 0.12) !important;
+}
+.bbaccounts-table tbody tr:nth-child(odd) {
+	background-color: rgba(120, 180, 100, 0.04) !important;
+}
+
+/* Trial balance: type headers and subtotal rows. Translucent black
+ * overlays so the grey reads on light styles (pale grey over white)
+ * and dark styles (slightly lighter dark over the dark base). Group
+ * subtotal is a touch heavier than the per-type subtotal to mark
+ * Balance Sheet / Profit & Loss boundaries.
+ */
+tr.bbaccounts-type-header th {
+	background-color: rgba(0, 0, 0, 0.10);
+	font-size: 1.05em;
+	letter-spacing: 0.03em;
+	padding-top: 0.6em;
+	padding-bottom: 0.6em;
+}
+tr.bbaccounts-subtotal th {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+tr.bbaccounts-group-subtotal th {
+	background-color: rgba(0, 0, 0, 0.12);
+	font-weight: bold;
+}
+
+/* Wowhead-tooltip aesthetic for the flatpickr calendar popup — sits
+ * on top of flatpickr-dark.min.css. Dark near-black background,
+ * gold/tan border, gold accent text + selected day. Matches the
+ * classic WoW UI tooltip palette so the picker feels at home in a
+ * pbwow3-themed forum.
+ */
+.flatpickr-calendar {
+	background: linear-gradient(180deg, #1c1c1c 0%, #0a0a0a 100%) !important;
+	border: 1px solid #c0a060 !important;
+	border-radius: 2px !important;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+	color: #f0f0f0 !important;
+}
+.flatpickr-calendar.arrowTop:before,
+.flatpickr-calendar.arrowTop:after,
+.flatpickr-calendar.arrowBottom:before,
+.flatpickr-calendar.arrowBottom:after {
+	border-bottom-color: #c0a060 !important;
+	border-top-color: #c0a060 !important;
+}
+
+.flatpickr-months,
+.flatpickr-months .flatpickr-month {
+	background: transparent !important;
+	color: #ffd700 !important;
+	fill: #ffd700 !important;
+}
+.flatpickr-current-month .cur-month,
+.flatpickr-current-month input.cur-year,
+.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+	color: #ffd700 !important;
+	border-bottom-color: #ffd700 !important;
+}
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+	color: #ffd700 !important;
+	fill: #ffd700 !important;
+}
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+	fill: #c0a060 !important;
+}
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+	fill: #ffd700 !important;
+}
+
+.flatpickr-weekdays,
+span.flatpickr-weekday {
+	background: transparent !important;
+	color: #c0a060 !important;
+}
+
+.flatpickr-day {
+	color: #f0f0f0 !important;
+	border-color: transparent !important;
+}
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+	color: #555 !important;
+}
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+	background: rgba(192, 160, 96, 0.25) !important;
+	border-color: rgba(192, 160, 96, 0.4) !important;
+}
+.flatpickr-day.today {
+	border-color: #ffd700 !important;
+}
+.flatpickr-day.today:hover {
+	background: #ffd700 !important;
+	color: #0a0a0a !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+	background: #c0a060 !important;
+	color: #0a0a0a !important;
+	border-color: #c0a060 !important;
+}
+
+/* Date-input fields inside any bbAccounts form (UCP statement, FE
+ * Reports filters). Browser default is white-on-light, which collides
+ * with dark forum styles (pbwow3 etc.). Matched to the Wowhead-
+ * tooltip calendar palette so the input + popup share the same look.
+ * Class-scoped (`.bbaccounts-form`) so it doesn't bleed into unrelated
+ * phpBB pages. Both the bare <input type="date"> selector and the
+ * `.flatpickr-input` class catch the field before and after flatpickr
+ * has initialised (the lib keeps the original input + adds the class).
+ */
+.bbaccounts-form input[type="date"],
+.bbaccounts-form input.flatpickr-input {
+	background: #1c1c1c !important;
+	color: #f0f0f0 !important;
+	border: 1px solid #c0a060 !important;
+	padding: 3px 8px !important;
+}
+.bbaccounts-form input[type="date"]:focus,
+.bbaccounts-form input.flatpickr-input:focus {
+	border-color: #ffd700 !important;
+	outline: none !important;
+}
+
+/* Standard phpBB UCP form layout: dt = label (left), dd = input (right).
+ * prosilver scopes this to `.panel fieldset dt/dd`, which pbwow3 + other
+ * dark styles sometimes override or scope away. Re-assert the layout
+ * for the bbAccounts statement filter so the inputs sit on the right
+ * regardless of style.
+ */
+.bbaccounts-form fieldset dl {
+	clear: left;
+	margin: 0.5em 0;
+	overflow: hidden;
+}
+.bbaccounts-form fieldset dt {
+	float: left;
+	width: 40%;
+	margin: 0;
+	padding-right: 1em;
+	box-sizing: border-box;
+}
+.bbaccounts-form fieldset dd {
+	margin: 0 0 0 41%;
+}
+.bbaccounts-form fieldset.submit-buttons {
+	text-align: center;
+	margin-top: 1em;
+}

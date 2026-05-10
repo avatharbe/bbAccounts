@@ -1,0 +1,94 @@
+imports:
+    - { resource: parameters.yml }
+
+services:
+    avathar.bbaccounts.service.ledger:
+        class: avathar\bbaccounts\service\ledger
+        arguments:
+            - '@dbal.conn'
+            - '%avathar.bbaccounts.tables.accounts%'
+            - '%avathar.bbaccounts.tables.journal%'
+            - '%avathar.bbaccounts.tables.journal_lines%'
+            - '%avathar.bbaccounts.tables.currencies%'
+
+    avathar.bbaccounts.service.csv_importer:
+        class: avathar\bbaccounts\service\csv_importer
+        arguments:
+            - '@dbal.conn'
+            - '%avathar.bbaccounts.tables.accounts%'
+
+    avathar.bbaccounts.service.balance_summary:
+        class: avathar\bbaccounts\service\balance_summary
+        arguments:
+            - '@avathar.bbaccounts.service.ledger'
+            - '@cache.driver'
+
+    avathar.bbaccounts.portal.module.balance:
+        class: avathar\bbaccounts\portal\module\bbaccounts_balance
+        arguments:
+            - '@user'
+            - '@template'
+            - '@avathar.bbaccounts.service.balance_summary'
+        tags:
+            - { name: bbguild.portal.module }
+
+    avathar.bbaccounts.event.listener:
+        class: avathar\bbaccounts\event\listener
+        arguments:
+            - '@language'
+            - '@auth'
+            - '@user'
+            - '@template'
+            - '@controller.helper'
+            - '@avathar.bbaccounts.service.balance_summary'
+            - '@dbal.conn'
+            - '%avathar.bbaccounts.tables.journal_lines%'
+        tags:
+            - { name: event.listener }
+
+    avathar.bbaccounts.controller.ucp:
+        class: avathar\bbaccounts\controller\ucp_controller
+        arguments:
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@avathar.bbaccounts.service.ledger'
+            - '@dbal.conn'
+            - '@pagination'
+            - '%avathar.bbaccounts.tables.accounts%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    avathar.bbaccounts.controller.main:
+        class: avathar\bbaccounts\controller\main_controller
+        arguments:
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@auth'
+            - '@avathar.bbaccounts.service.ledger'
+            - '@dbal.conn'
+            - '@user_loader'
+            - '%avathar.bbaccounts.tables.accounts%'
+
+    avathar.bbaccounts.controller.acp:
+        class: avathar\bbaccounts\controller\acp_controller
+        arguments:
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@avathar.bbaccounts.service.ledger'
+            - '@avathar.bbaccounts.service.csv_importer'
+            - '@cache.driver'
+            - '@dbal.conn'
+            - '@config'
+            - '@pagination'
+            - '@user_loader'
+            - '%avathar.bbaccounts.tables.accounts%'
+            - '%avathar.bbaccounts.tables.journal%'
+            - '%avathar.bbaccounts.tables.journal_lines%'
+            - '%avathar.bbaccounts.tables.currencies%'

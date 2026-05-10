@@ -1,0 +1,170 @@
+<h2>{L_BBACCOUNTS_IMPORT_CSV}</h2>
+<p class="explain">{L_BBACCOUNTS_IMPORT_CSV_EXPLAIN}</p>
+
+<!-- IF IMPORT_ERROR -->
+	<p class="error">{IMPORT_ERROR}</p>
+<!-- ENDIF -->
+
+<!-- IF S_IMPORT_RESULT -->
+
+	<p class="successbox">{L_BBACCOUNTS_IMPORT_RESULT_HEADING}</p>
+	<p>{L_BBACCOUNTS_IMPORT_RESULT_COUNT}: <strong>{IMPORT_RESULT_COUNT}</strong></p>
+
+	<table class="table1 zebra-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_IMPORT_ENTRY_REF}</th>
+				<th>{L_BBACCOUNTS_JOURNAL_ID}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN import_results -->
+			<tr>
+				<td>{import_results.ENTRY_REF}</td>
+				<td>#{import_results.JOURNAL_ID}</td>
+			</tr>
+			<!-- END import_results -->
+		</tbody>
+	</table>
+
+	<p>
+		<a class="button1" href="{U_JOURNAL_LIST}">{L_BBACCOUNTS_IMPORT_RESULT_BACK_TO_JOURNAL}</a>
+		<a class="button2" href="{U_ACTION}">{L_BBACCOUNTS_IMPORT_RESULT_IMPORT_AGAIN}</a>
+	</p>
+
+<!-- ELSEIF S_IMPORT_FILE_RECEIVED -->
+	<p class="successbox">{L_BBACCOUNTS_IMPORT_FILE_RECEIVED} <strong>{IMPORT_FILENAME}</strong></p>
+
+	<table class="table1">
+		<tbody>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_ENTRIES}</th><td>{IMPORT_ENTRY_COUNT}</td></tr>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_LINES}</th><td>{IMPORT_LINE_COUNT}</td></tr>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_GLOBAL_ERRORS}</th><td>{IMPORT_GLOBAL_ERRORS}</td></tr>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_ENTRY_ERRORS}</th><td>{IMPORT_ENTRY_ERRORS}</td></tr>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_ROW_ERRORS}</th><td>{IMPORT_ROW_ERRORS}</td></tr>
+			<tr><th>{L_BBACCOUNTS_IMPORT_SUMMARY_STATUS}</th><td><!-- IF S_IMPORT_CLEAN -->{L_BBACCOUNTS_IMPORT_STATUS_CLEAN}<!-- ELSE --><span class="error">{L_BBACCOUNTS_IMPORT_STATUS_ERRORS}</span><!-- ENDIF --></td></tr>
+		</tbody>
+	</table>
+
+	<!-- IF .import_global_errors -->
+		<ul class="error">
+			<!-- BEGIN import_global_errors -->
+			<li>{import_global_errors.MESSAGE}</li>
+			<!-- END import_global_errors -->
+		</ul>
+	<!-- ENDIF -->
+
+	<!-- IF S_IMPORT_HAS_PREVIEW -->
+		<h3>{L_BBACCOUNTS_IMPORT_PREVIEW}</h3>
+
+		<!-- BEGIN import_entries -->
+			<fieldset class="bbaccounts-import-entry<!-- IF import_entries.HAS_ERRORS --> bbaccounts-import-entry-error<!-- ENDIF -->">
+				<legend>
+					{L_BBACCOUNTS_IMPORT_ENTRY_REF}: <strong>{import_entries.ENTRY_REF}</strong>
+					<!-- IF import_entries.HAS_ERRORS --><span class="error">&#9888; {L_BBACCOUNTS_IMPORT_ENTRY_HAS_ERRORS}</span><!-- ENDIF -->
+				</legend>
+
+				<dl>
+					<dt>{L_BBACCOUNTS_ENTRY_DATE}:</dt>
+					<dd>{import_entries.ENTRY_DATE}</dd>
+				</dl>
+				<dl>
+					<dt>{L_BBACCOUNTS_DESCRIPTION}:</dt>
+					<dd>{import_entries.DESCRIPTION}</dd>
+				</dl>
+
+				<table class="table1 zebra-table">
+					<thead>
+						<tr>
+							<th>{L_BBACCOUNTS_IMPORT_ROW}</th>
+							<th>{L_BBACCOUNTS_ACCOUNT_CODE}</th>
+							<th>{L_BBACCOUNTS_ACCOUNT_NAME}</th>
+							<th>{L_BBACCOUNTS_CURRENCY}</th>
+							<th style="text-align:right">{L_BBACCOUNTS_LINE_DEBIT}</th>
+							<th style="text-align:right">{L_BBACCOUNTS_LINE_CREDIT}</th>
+							<th>{L_BBACCOUNTS_LINE_USER}</th>
+							<th>{L_BBACCOUNTS_LINE_MEMO}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- BEGIN lines -->
+						<tr<!-- IF import_entries.lines.HAS_ERRORS --> class="bbaccounts-import-row-error"<!-- ENDIF -->>
+							<td>{import_entries.lines.LINE_NO}</td>
+							<td>{import_entries.lines.ACCOUNT_CODE}</td>
+							<td>{import_entries.lines.ACCOUNT_NAME}</td>
+							<td>{import_entries.lines.CURRENCY}</td>
+							<td style="text-align:right">{import_entries.lines.DEBIT}</td>
+							<td style="text-align:right">{import_entries.lines.CREDIT}</td>
+							<td>{import_entries.lines.SUBLEDGER_USER_ID}</td>
+							<td>{import_entries.lines.MEMO}</td>
+						</tr>
+						<!-- IF import_entries.lines.HAS_ERRORS -->
+						<tr class="bbaccounts-import-row-error-detail">
+							<td colspan="8">
+								<ul class="error">
+									<!-- BEGIN errors -->
+									<li>{import_entries.lines.errors.MESSAGE}</li>
+									<!-- END errors -->
+								</ul>
+							</td>
+						</tr>
+						<!-- ENDIF -->
+						<!-- END lines -->
+					</tbody>
+					<tfoot>
+						<tr>
+							<th colspan="4" style="text-align:right">{L_BBACCOUNTS_IMPORT_ENTRY_TOTAL}</th>
+							<th style="text-align:right">{import_entries.TOTAL_DR}</th>
+							<th style="text-align:right">{import_entries.TOTAL_CR}</th>
+							<th colspan="2"><!-- IF import_entries.BALANCED -->&#10003; {L_BBACCOUNTS_TB_BALANCED}<!-- ELSE --><span class="error">&#10007; {L_BBACCOUNTS_TB_UNBALANCED}</span><!-- ENDIF --></th>
+						</tr>
+					</tfoot>
+				</table>
+
+				<!-- IF .import_entries.errors -->
+					<ul class="error">
+						<!-- BEGIN errors -->
+						<li>{import_entries.errors.MESSAGE}</li>
+						<!-- END errors -->
+					</ul>
+				<!-- ENDIF -->
+			</fieldset>
+		<!-- END import_entries -->
+	<!-- ENDIF -->
+
+	<!-- IF S_IMPORT_CLEAN and IMPORT_CONFIRM_TOKEN -->
+		<form method="post" action="{U_IMPORT_CONFIRM}">
+			<input type="hidden" name="confirm_token" value="{IMPORT_CONFIRM_TOKEN}">
+			<input type="hidden" name="confirm" value="1">
+			<p class="submit-buttons">
+				<input class="button1" type="submit" name="submit_confirm" value="{L_BBACCOUNTS_IMPORT_CONFIRM}">
+				<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+			</p>
+			{S_FORM_TOKEN}
+		</form>
+		<p class="explain">{L_BBACCOUNTS_IMPORT_CONFIRM_PENDING}</p>
+	<!-- ELSE -->
+		<p>
+			<a class="button2" href="{U_ACTION}">{L_BBACCOUNTS_IMPORT_REUPLOAD}</a>
+			<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+		</p>
+	<!-- ENDIF -->
+
+<!-- ELSE -->
+
+	<form method="post" action="{U_ACTION}" enctype="multipart/form-data">
+		<fieldset>
+			<legend>{L_BBACCOUNTS_IMPORT_CSV}</legend>
+			<dl>
+				<dt><label for="csv_file">{L_BBACCOUNTS_IMPORT_FILE}:</label><br /><span>{L_BBACCOUNTS_IMPORT_FILE_EXPLAIN}</span></dt>
+				<dd><input type="file" id="csv_file" name="csv_file" accept=".csv,text/csv"></dd>
+			</dl>
+			<p class="submit-buttons">
+				<input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_IMPORT_UPLOAD}">
+				<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+			</p>
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+
+<!-- ENDIF -->

@@ -1,0 +1,9 @@
+entry_ref,entry_date,description,account_code,debit,credit,subledger_user_id,memo,reference_type,reference_source,reference_id
+GRANT-001,2026-05-01,Welcome bonus,1010,100.00,0,0,Funds welcome bonus pool,manual,bbaccounts.manual,0
+GRANT-001,2026-05-01,Welcome bonus,2100,0,100.00,2,Welcome bonus,manual,bbaccounts.manual,0
+RAID-042,2026-05-02,Raid 42 distribution,1010,300.00,0,0,Pool funded by treasury,manual,bbaccounts.manual,42
+RAID-042,2026-05-02,Raid 42 distribution,2100,0,150.00,2,Top performer,manual,bbaccounts.manual,42
+RAID-042,2026-05-02,Raid 42 distribution,2100,0,100.00,3,Attendance reward,manual,bbaccounts.manual,42
+RAID-042,2026-05-02,Raid 42 distribution,2100,0,50.00,4,Attendance reward,manual,bbaccounts.manual,42
+SEED-005,2026-05-03,Initial bankroll,1010,1000.00,0,0,,manual,bbaccounts.manual,0
+SEED-005,2026-05-03,Initial bankroll,3010,0,1000.00,0,Opening balance for POINTS pool,manual,bbaccounts.manual,0

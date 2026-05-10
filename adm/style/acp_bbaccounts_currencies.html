@@ -1,0 +1,69 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_BBACCOUNTS_CURRENCIES_TITLE}</h1>
+
+<!-- IF S_CURRENCY_FORM -->
+	<form id="bbaccounts_currency_form" method="post" action="{U_ACTION}">
+		<fieldset>
+			<legend><!-- IF S_IS_EDIT -->{L_BBACCOUNTS_CURRENCY_EDIT}<!-- ELSE -->{L_BBACCOUNTS_CURRENCY_ADD}<!-- ENDIF --></legend>
+
+			<!-- IF S_IS_LOCKED -->
+				<p class="error">{L_BBACCOUNTS_CURRENCY_LOCKED}</p>
+			<!-- ENDIF -->
+
+			<dl>
+				<dt><label for="currency_code">{L_BBACCOUNTS_CURRENCY_CODE}:</label><br /><span>{L_BBACCOUNTS_CURRENCY_CODE_EXPLAIN}</span></dt>
+				<dd><input type="text" id="currency_code" name="currency_code" value="{CURRENCY_CODE}" maxlength="8"<!-- IF S_IS_EDIT --> readonly<!-- ENDIF -->></dd>
+			</dl>
+
+			<dl>
+				<dt><label for="currency_name">{L_BBACCOUNTS_CURRENCY_NAME}:</label><br /><span>{L_BBACCOUNTS_CURRENCY_NAME_EXPLAIN}</span></dt>
+				<dd><input type="text" id="currency_name" name="currency_name" value="{CURRENCY_NAME}" maxlength="64" size="40"></dd>
+			</dl>
+
+			<dl>
+				<dt><label for="cur_is_active">{L_BBACCOUNTS_IS_ACTIVE}:</label><br /><span>{L_BBACCOUNTS_CURRENCY_ACTIVE_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" id="cur_is_active" name="is_active" value="1"<!-- IF IS_ACTIVE --> checked<!-- ENDIF -->></dd>
+			</dl>
+
+			<p class="submit-buttons">
+				<input class="button1" type="submit" name="submit" value="{L_BBACCOUNTS_SUBMIT}">
+				<a class="button2" href="{U_BACK}">{L_BBACCOUNTS_BACK}</a>
+			</p>
+
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+<!-- ELSE -->
+	<p><a class="button2" href="{U_ADD}">{L_BBACCOUNTS_CURRENCY_ADD}</a></p>
+
+	<table class="table1 zebra-table">
+		<thead>
+			<tr>
+				<th>{L_BBACCOUNTS_CURRENCY_CODE}</th>
+				<th>{L_BBACCOUNTS_CURRENCY_NAME}</th>
+				<th>{L_BBACCOUNTS_CURRENCY_ACCOUNT_COUNT}</th>
+				<th>{L_BBACCOUNTS_IS_ACTIVE}</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN currencies -->
+			<tr>
+				<td>{currencies.CODE}</td>
+				<td>{currencies.NAME}</td>
+				<td>{currencies.ACCOUNT_COUNT}</td>
+				<td><!-- IF currencies.IS_ACTIVE -->&#10003;<!-- ELSE -->&#10007;<!-- ENDIF --></td>
+				<td>
+					<a href="{currencies.U_EDIT}">{L_BBACCOUNTS_CURRENCY_EDIT}</a>
+					| <a href="{currencies.U_TOGGLE}"><!-- IF currencies.IS_ACTIVE -->{L_BBACCOUNTS_DISABLE}<!-- ELSE -->{L_BBACCOUNTS_ENABLE}<!-- ENDIF --></a>
+				</td>
+			</tr>
+			<!-- END currencies -->
+		</tbody>
+	</table>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->
