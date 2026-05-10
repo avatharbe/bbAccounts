@@ -5,8 +5,6 @@ bbAccounts for phpBB 3.3
 
 Double-entry accounting for phpBB. Provides a ledger service plus an admin UI; designed as a point-storage foundation that other phpBB extensions can post journal entries against.
 
-**Status:** Phases 1–3 shipped; **v1.3.0-alpha** tagged (2026-05-03). Phase 1 = admin foundation (ledger service + ACP), Phase 2 = bulk CSV import + balance lookups + currency management UI, Phase 3 = user-facing surfaces (UCP wallet + statement, profile badge, portal widget, FE Reports). Phase 4 (period locking, period-end close, materialised P&L / Balance Sheet) and source-module integrations (#3 ultimatepoints, #4 bbDKP) are next. See [`contrib/specs/2026-04-26-bbaccounts-phase1-design.md`](contrib/specs/2026-04-26-bbaccounts-phase1-design.md) for the founding design and [`CHANGELOG.md`](CHANGELOG.md) for the per-release detail.
-
 #### Requirements
 - phpBB 3.3.0 or higher
 - PHP 8.1 or higher
