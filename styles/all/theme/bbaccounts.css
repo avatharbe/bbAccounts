@@ -1,5 +1,38 @@
 /* bbAccounts — defensive CSS overrides
  *
+ * common.css ships an `h1 { margin-top: 100px; }` that pushes our
+ * Reports page heading way down the viewport, and on dark styles
+ * (pbwow3, we_clearblue, …) h1 inherits a near-black colour that
+ * vanishes against the dark page background. Scope both fixes to
+ * the bbaccounts page wrapper so forum h1s elsewhere are untouched;
+ * `color: inherit` picks up the active style's body text colour
+ * (light on dark themes, dark on light themes) without us having
+ * to hard-code per-style overrides.
+ */
+.bbaccountspage h1 {
+	margin-top: 0;
+	margin-bottom: 0.6em;
+	color: inherit;
+	font-size: 2.4em;
+}
+
+/* pbwow3/common.css styles h2 at `font-size: 3em` (the active styles'
+ * decorative section banner), which renders h2 visually larger than
+ * the page-level h1 — wrong hierarchy. Inside the Reports wrapper we
+ * have many h2 sub-section headings, so shrink them to a normal sub-
+ * heading size and pin h3 below that. font-family/letter-spacing from
+ * the active style is left alone (inherits through).
+ */
+.bbaccountspage h2 {
+	font-size: 1.6em;
+	color: inherit;
+}
+.bbaccountspage h3 {
+	font-size: 1.2em;
+	color: inherit;
+}
+
+/*
  * prosilver's stock `.table1 tbody tr:hover` uses a light-blue
  * highlight (`#ECF6F8`). On dark styles that override the table
  * background to dark + the text to white, the hover state collides

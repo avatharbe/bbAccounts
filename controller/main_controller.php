@@ -92,6 +92,8 @@ class main_controller
 			'U_REPORT_USER_BALANCE'   => $this->report_url('user_balance_lookup'),
 			'S_REPORT'                => $report,
 			'S_FE_REPORTS'            => true,
+			'S_BBACCOUNTS_PAGE'       => true,
+			'S_BBACCOUNTS_DATEPICKER' => true,
 		]);
 
 		switch ($report)

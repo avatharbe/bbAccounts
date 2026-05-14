@@ -111,8 +111,9 @@ class ucp_controller
 		}
 
 		$this->template->assign_vars([
-			'S_HAS_BALANCES' => !empty($balances),
-			'U_ACTION'       => $this->u_action,
+			'S_HAS_BALANCES'   => !empty($balances),
+			'U_ACTION'         => $this->u_action,
+			'S_BBACCOUNTS_PAGE' => true,
 		]);
 	}
 
@@ -202,17 +203,19 @@ class ucp_controller
 		);
 
 		$this->template->assign_vars([
-			'S_HAS_SUMMARY'  => !empty($summary),
-			'S_HAS_RESULTS'  => !empty($result['rows']),
-			'SL_FROM_ISO'    => $from_iso,
-			'SL_TO_ISO'      => $to_iso,
-			'SL_PER_PAGE'    => $per_page,
-			'SL_TOTAL_DR'    => $result['total_debit'],
-			'SL_TOTAL_CR'    => $result['total_credit'],
-			'SL_TOTAL_ROWS'  => $result['total'],
-			'SL_PAGE'        => $page,
-			'SL_TOTAL_PAGES' => $total_pages,
-			'U_ACTION'       => $this->u_action,
+			'S_HAS_SUMMARY'           => !empty($summary),
+			'S_HAS_RESULTS'           => !empty($result['rows']),
+			'SL_FROM_ISO'             => $from_iso,
+			'SL_TO_ISO'               => $to_iso,
+			'SL_PER_PAGE'             => $per_page,
+			'SL_TOTAL_DR'             => $result['total_debit'],
+			'SL_TOTAL_CR'             => $result['total_credit'],
+			'SL_TOTAL_ROWS'           => $result['total'],
+			'SL_PAGE'                 => $page,
+			'SL_TOTAL_PAGES'          => $total_pages,
+			'U_ACTION'                => $this->u_action,
+			'S_BBACCOUNTS_PAGE'       => true,
+			'S_BBACCOUNTS_DATEPICKER' => true,
 		]);
 	}
 

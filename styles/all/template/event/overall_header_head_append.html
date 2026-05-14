@@ -1,0 +1,11 @@
+{% if S_BBACCOUNTS_PAGE %}
+	{% INCLUDECSS '@avathar_bbaccounts/bbaccounts.css' %}
+{% endif %}
+{% if S_BBACCOUNTS_DATEPICKER %}
+	{# Flatpickr ships in two flavours under styles/all/theme/. The dark
+	   theme is the default because dark forum styles (pbwow3, we_clearblue)
+	   are the common case here; swap to flatpickr-light.min.css for
+	   prosilver / light styles. #}
+	{% INCLUDECSS '@avathar_bbaccounts/flatpickr-dark.min.css' %}
+	{% INCLUDEJS '@avathar_bbaccounts/flatpickr.min.js' %}
+{% endif %}
