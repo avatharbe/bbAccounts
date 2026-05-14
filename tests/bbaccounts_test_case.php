@@ -141,7 +141,7 @@ abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
 
     /**
      * Drop and recreate the three bbatest_ tables. Schema mirrors
-     * migrations/v1_0_0_initial.php exactly (mediumint UINT, decimal(20,2),
+     * migrations/v1_0_0_schema.php exactly (mediumint UINT, decimal(20,2),
      * etc.) so the ledger service runs against the production-shape schema.
      */
     protected function reset_schema(): void
