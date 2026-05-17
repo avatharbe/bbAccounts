@@ -82,16 +82,19 @@ A cached read-side helper for "show me one row per currency" UI (profile badges,
 
 | Route name | Path | Purpose |
 |---|---|---|
-| `avathar_bbaccounts_reports` | `/bbaccounts/reports/{report}` | Front-end read-only mirror of the ACP Reports module. `{report}` ∈ `trial_balance` (default), `account_ledger`, `subledger`, `balance_lookup`, `user_balance_lookup`. Gated on `u_accounts_view`. |
+| `avathar_bbaccounts_reports` | `/bbaccounts/reports/{report}` | Front-end read-only mirror of the ACP Reports module. `{report}` ∈ `trial_balance` (default), `account_ledger`, `subledger`, `balance_lookup`, `user_balance_lookup`. Access is split between two perms — see Permissions below. |
 
 ### 1.4 Permissions
 
 | Permission key | Category | Purpose |
 |---|---|---|
 | `a_accounts` | misc | Admin: full ACP access (currencies, accounts, journal CRUD, reports). Granted to `ROLE_ADMIN_FULL` by default. |
-| `u_accounts_view` | misc | User: view the front-end Reports page and other-users' profile balance badges. Granted to `ROLE_ADMIN_FULL` and `ROLE_MOD_FULL` by default. |
+| `u_accounts_view_aggregates` | misc | User: view aggregate Reports — trial balance and account-balance lookup. Gates the navbar "bbAccounts Reports" link (either view perm shows it). Granted to `ROLE_MOD_FULL` by default. |
+| `u_accounts_view_users` | misc | User: view per-user Reports — account ledger, user statement (subledger), user-balance lookup — plus the balance badge on **other** users' profile pages. Granted to `ROLE_MOD_FULL` by default. |
 
-Note: own-balance views (UCP "My Wallet", UCP "My Statement", own-profile balance badge) are **not** gated by `u_accounts_view`. Any logged-in user can see their own balance — the UCP module gate `ext_avathar/bbaccounts` and a self-vs-other check in the event listener handle that.
+The two view perms split along the aggregate-vs-per-user axis so a treasurer / officer role can read financial summaries without also being able to look up individual user activity. A viewer with EITHER perm reaches the front-end Reports page; each report tab is then enforced per-perm individually (direct-URL access to a gated report returns 403). Display labels in the ACP permission MASK UI are prefixed `"bbAccounts: "` for scannability.
+
+Note: own-balance views (UCP "My Wallet", UCP "My Statement", own-profile balance badge) are **not** gated by either view perm. Any logged-in user can see their own balance — the UCP module gate `ext_avathar/bbaccounts` and a self-vs-other check in the event listener handle that.
 
 ---
 
@@ -109,5 +112,5 @@ bbAccounts subscribes to a handful of standard phpBB core events from `event/lis
 
 | phpBB Core Event | Handler | Why it's non-obvious |
 |---|---|---|
-| `core.permissions` | `on_permissions()` | Without this hook, `a_accounts` and `u_accounts_view` exist in `phpbb_acl_options` (the migration adds them) but the ACP permission MASK shows **no row** to grant them — the perms are silently ungrantable. Hook registers them in the `misc` category so they appear in the role/group/user permission tabs. |
+| `core.permissions` | `on_permissions()` | Without this hook, `a_accounts`, `u_accounts_view_aggregates`, and `u_accounts_view_users` exist in `phpbb_acl_options` (the migration adds them) but the ACP permission MASK shows **no row** to grant them — the perms are silently ungrantable. Hook registers them in the `misc` category so they appear in the role/group/user permission tabs. |
 | `core.delete_user_after` | `on_user_delete()` | bbAccounts does **not** delete the user's journal data. It remaps `bbaccounts_journal_lines.subledger_user_id` from the deleted user to `ANONYMOUS_USER_ID` (1). The journal is immutable by design, so historical balances stay intact and reports continue to reconcile — the deleted user's slice just becomes attributable to "anonymous" in subledger statements. |

@@ -185,18 +185,21 @@ Set **Reference type** to `import` if you're seeding via the (planned) CSV impor
 
 ## Permissions — who sees what
 
-bbAccounts ships two custom permissions plus relies on phpBB's "is the extension enabled" gate for user surfaces.
+bbAccounts ships three custom permissions plus relies on phpBB's "is the extension enabled" gate for user surfaces.
 
 | Permission | Type | Default-granted to | What it unlocks |
 |---|---|---|---|
 | `a_accounts` | Admin | `ROLE_ADMIN_FULL` | Full ACP access: chart of accounts edit, journal create/reverse, currencies, CSV import, all Reports sub-modes |
-| `u_accounts_view` | User | `ROLE_MOD_FULL` (also: any group/user you grant manually) | ACP Reports (read-only) + the front-end Reports page at `/app.php/bbaccounts/reports/...` + the "bbAccounts Reports" link in the sandwich/quick-links menu + the post-profile balance badge on **other** users' profiles |
+| `u_accounts_view_aggregates` | User | `ROLE_MOD_FULL` (also: any group/user you grant manually) | Front-end Reports page (aggregate sub-modes only: *trial balance* and *account balance lookup*) + the "bbAccounts Reports" link in the sandwich/quick-links menu (shown if the viewer has **either** view perm) |
+| `u_accounts_view_users` | User | `ROLE_MOD_FULL` (also: any group/user you grant manually) | Front-end Reports page (per-user sub-modes: *account ledger*, *user statement*, *user balance lookup*) + the post-profile balance badge on **other** users' profiles + the navbar Reports link (shared trigger with `u_accounts_view_aggregates`) |
 | *(no permission needed — extension-enabled gate)* | User | every logged-in user | UCP "bbAccounts" tab → My Wallet + My Statement + own-balance badge on **own** profile + bbGuild portal own-balance widget |
 
-**Common surprise:** an admin testing as their own account doesn't automatically have `u_accounts_view`. The migration grants it to `ROLE_MOD_FULL`, so it flows to anyone in a group using that role (typically Global Moderators). Admins themselves usually inherit only `ROLE_ADMIN_FULL` + `ROLE_USER_STANDARD`. To grant access:
+The two view perms split along the aggregate-vs-per-user axis: a treasurer or officer role can be given `u_accounts_view_aggregates` alone to read trial balances and account totals without also being able to look up individual users. Granting `u_accounts_view_users` alone exposes per-user data without revealing forum-wide totals. Granting both reproduces the pre-2026-05-17 single-perm behaviour.
 
-- ACP → Permissions → **User permissions** → enter your username → tab **User permissions** → set "Can view bbAccounts reports" to **Yes** → Apply (per-user override), or
-- ACP → Permissions → **Group permissions** → pick a group → grant the perm there for everyone in the group.
+**Common surprise:** an admin testing as their own account doesn't automatically have the view perms. The migration grants both to `ROLE_MOD_FULL`, so they flow to anyone in a group using that role (typically Global Moderators). Admins themselves usually inherit only `ROLE_ADMIN_FULL` + `ROLE_USER_STANDARD`. To grant access:
+
+- ACP → Permissions → **User permissions** → enter your username → tab **User permissions** → look under "Miscellaneous" for the rows prefixed `"bbAccounts: View aggregate reports …"` and `"bbAccounts: View per-user data …"` → set the ones you want to **Yes** → Apply (per-user override), or
+- ACP → Permissions → **Group permissions** → pick a group → grant the perms there for everyone in the group.
 
 End users (regular registered) see their own wallet and statement in the UCP without any permission grant — the extension being installed is the gate. They never see other users' data unless they're a mod.
 
