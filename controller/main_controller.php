@@ -11,7 +11,9 @@ namespace avathar\bbaccounts\controller;
  * Front-end Reports controller (mod-gated). Read-only mirror of the ACP
  * Reports module — write paths (chart of accounts, journal create/reverse,
  * currencies, CSV import) are deliberately not exposed here. Users without
- * `u_accounts_view` get a 403 from the auth gate at the top of `handle()`.
+ * `u_accounts_view_aggregates` or `u_accounts_view_users` get a 403 from
+ * the auth gate at the top of `handle()`. The per-report switch enforces
+ * the specific perm needed for each sub-report.
  */
 class main_controller
 {
@@ -68,7 +70,9 @@ class main_controller
 	 */
 	public function handle(string $report = 'trial_balance')
 	{
-		if (!$this->auth->acl_get('u_accounts_view'))
+		$can_aggregates = (bool) $this->auth->acl_get('u_accounts_view_aggregates');
+		$can_users      = (bool) $this->auth->acl_get('u_accounts_view_users');
+		if (!$can_aggregates && !$can_users)
 		{
 			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 		}
@@ -85,28 +89,50 @@ class main_controller
 			'S_FE_REPORTS'            => true,
 			'S_BBACCOUNTS_PAGE'       => true,
 			'S_BBACCOUNTS_DATEPICKER' => true,
+			'S_CAN_VIEW_AGGREGATES'   => $can_aggregates,
+			'S_CAN_VIEW_USERS'        => $can_users,
 		]);
 
 		switch ($report)
 		{
 			case 'account_ledger':
+				if (!$can_users)
+				{
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+				}
 				$this->template->assign_var('S_REPORT_ACCOUNT_LEDGER', true);
 				$this->display_account_ledger();
 				break;
 			case 'subledger':
+				if (!$can_users)
+				{
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+				}
 				$this->template->assign_var('S_REPORT_SUBLEDGER', true);
 				$this->display_subledger_statement();
 				break;
 			case 'balance_lookup':
+				if (!$can_aggregates)
+				{
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+				}
 				$this->template->assign_var('S_REPORT_BALANCE_LOOKUP', true);
 				$this->display_balance_lookup();
 				break;
 			case 'user_balance_lookup':
+				if (!$can_users)
+				{
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+				}
 				$this->template->assign_var('S_REPORT_USER_BALANCE', true);
 				$this->display_user_balance_lookup();
 				break;
 			case 'trial_balance':
 			default:
+				if (!$can_aggregates)
+				{
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+				}
 				$this->template->assign_var('S_REPORT_TRIAL_BALANCE', true);
 				$this->display_trial_balance();
 				break;
