@@ -11,8 +11,9 @@ namespace avathar\bbaccounts\migrations;
  * Every ACP and UCP module the extension registers. Depends on
  * `v1_0_0_config` because the ACP module_auth strings reference the
  * admin/mod permissions that migration adds (`acl_a_accounts`,
- * `acl_u_accounts_view`). UCP modules gate only on `ext_avathar/
- * bbaccounts` — any logged-in user sees their own wallet.
+ * `acl_u_accounts_view_aggregates`, `acl_u_accounts_view_users`).
+ * UCP modules gate only on `ext_avathar/bbaccounts` — any logged-in
+ * user sees their own wallet.
  *
  * The UCP parent category sits at top-level (parent = 0) so
  * "bbAccounts" appears as its own UCP tab alongside Profile /
@@ -87,7 +88,7 @@ class v1_0_0_modules extends \phpbb\db\migration\migration
 					'module_basename' => '\avathar\bbaccounts\acp\main_module',
 					'module_langname' => 'ACP_BBACCOUNTS_REPORTS',
 					'module_mode'     => 'reports',
-					'module_auth'     => 'ext_avathar/bbaccounts && (acl_a_accounts || acl_u_accounts_view)',
+					'module_auth'     => 'ext_avathar/bbaccounts && (acl_a_accounts || acl_u_accounts_view_aggregates || acl_u_accounts_view_users)',
 				],
 			]],
 

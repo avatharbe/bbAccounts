@@ -32,7 +32,7 @@ class main_info
 				],
 				'reports' => [
 					'title' => 'ACP_BBACCOUNTS_REPORTS',
-					'auth'  => 'ext_avathar/bbaccounts && (acl_a_accounts || acl_u_accounts_view)',
+					'auth'  => 'ext_avathar/bbaccounts && (acl_a_accounts || acl_u_accounts_view_aggregates || acl_u_accounts_view_users)',
 					'cat'   => ['ACP_BBACCOUNTS'],
 				],
 			],

@@ -40,19 +40,23 @@ class v1_0_0_config extends \phpbb\db\migration\migration
 			['config.add', ['bbaccounts_currency_default', 'POINTS']],
 			['config.add', ['bbaccounts_per_page', 25]],
 
-			// Custom permissions kept lean: admin perm for write paths,
-			// user perm for read access to other users' data (Reports +
-			// other-profile balance badge). UCP "My Wallet" is intentionally
-			// NOT permission-gated — any logged-in user sees their own
-			// data, the extension being enabled is the gate. `u_accounts_view`
-			// (rather than `m_accounts_view`) because phpBB strictly maps
-			// the perm prefix to a UI tab — `u_*` perms surface in User
-			// permissions, where they're easy to grant; `m_*` would be
-			// hidden behind per-forum mod scoping.
-			['permission.add', ['a_accounts',      true]],
-			['permission.add', ['u_accounts_view', true]],
-			['permission.permission_set', ['ROLE_ADMIN_FULL', 'a_accounts',      'role']],
-			['permission.permission_set', ['ROLE_MOD_FULL',   'u_accounts_view', 'role']],
+			// Custom permissions split along the aggregate-vs-per-user axis so
+			// forums can grant treasurer/officer read access to financial
+			// summaries (trial balance, account balance lookup) without also
+			// exposing individual user activity (ledgers, statements, balance
+			// badges on other profiles). Both default to ROLE_MOD_FULL — mods
+			// historically held the single `u_accounts_view`, so a fresh install
+			// keeps the same effective grant. UCP "My Wallet" remains intentionally
+			// NOT permission-gated — any logged-in user sees their own data, the
+			// extension being enabled is the gate. `u_*` prefix (rather than `m_*`)
+			// because phpBB strictly maps the perm prefix to a UI tab — `u_*`
+			// perms surface in User permissions, where they're easy to grant.
+			['permission.add', ['a_accounts',                 true]],
+			['permission.add', ['u_accounts_view_aggregates', true]],
+			['permission.add', ['u_accounts_view_users',      true]],
+			['permission.permission_set', ['ROLE_ADMIN_FULL', 'a_accounts',                 'role']],
+			['permission.permission_set', ['ROLE_MOD_FULL',   'u_accounts_view_aggregates', 'role']],
+			['permission.permission_set', ['ROLE_MOD_FULL',   'u_accounts_view_users',      'role']],
 
 			['custom', [[$this, 'seed_currencies']]],
 			['custom', [[$this, 'seed_chart_of_accounts']]],
@@ -62,7 +66,8 @@ class v1_0_0_config extends \phpbb\db\migration\migration
 	public function revert_data()
 	{
 		return [
-			['permission.remove', ['u_accounts_view']],
+			['permission.remove', ['u_accounts_view_users']],
+			['permission.remove', ['u_accounts_view_aggregates']],
 			['permission.remove', ['a_accounts']],
 			['config.remove', ['bbaccounts_per_page']],
 			['config.remove', ['bbaccounts_currency_default']],
