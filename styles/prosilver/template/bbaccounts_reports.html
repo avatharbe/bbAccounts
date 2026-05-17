@@ -6,11 +6,19 @@
 <h1>{L_BBACCOUNTS_REPORTS_TITLE}</h1>
 
 <p class="bbaccounts-report-nav">
-    <a class="button2<!-- IF S_REPORT_TRIAL_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_TRIAL_BALANCE}">{L_BBACCOUNTS_REPORT_TRIAL_BALANCE}</a>
-    <a class="button2<!-- IF S_REPORT_ACCOUNT_LEDGER --> active<!-- ENDIF -->" href="{U_REPORT_ACCOUNT_LEDGER}">{L_BBACCOUNTS_REPORT_ACCOUNT_LEDGER}</a>
-    <a class="button2<!-- IF S_REPORT_SUBLEDGER --> active<!-- ENDIF -->" href="{U_REPORT_SUBLEDGER}">{L_BBACCOUNTS_REPORT_SUBLEDGER}</a>
-    <a class="button2<!-- IF S_REPORT_BALANCE_LOOKUP --> active<!-- ENDIF -->" href="{U_REPORT_BALANCE_LOOKUP}">{L_BBACCOUNTS_REPORT_BALANCE_LOOKUP}</a>
-    <a class="button2<!-- IF S_REPORT_USER_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_USER_BALANCE}">{L_BBACCOUNTS_REPORT_USER_BALANCE}</a>
+    <!-- IF S_CAN_VIEW_AGGREGATES -->
+        <a class="button2<!-- IF S_REPORT_TRIAL_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_TRIAL_BALANCE}">{L_BBACCOUNTS_REPORT_TRIAL_BALANCE}</a>
+    <!-- ENDIF -->
+    <!-- IF S_CAN_VIEW_USERS -->
+        <a class="button2<!-- IF S_REPORT_ACCOUNT_LEDGER --> active<!-- ENDIF -->" href="{U_REPORT_ACCOUNT_LEDGER}">{L_BBACCOUNTS_REPORT_ACCOUNT_LEDGER}</a>
+        <a class="button2<!-- IF S_REPORT_SUBLEDGER --> active<!-- ENDIF -->" href="{U_REPORT_SUBLEDGER}">{L_BBACCOUNTS_REPORT_SUBLEDGER}</a>
+    <!-- ENDIF -->
+    <!-- IF S_CAN_VIEW_AGGREGATES -->
+        <a class="button2<!-- IF S_REPORT_BALANCE_LOOKUP --> active<!-- ENDIF -->" href="{U_REPORT_BALANCE_LOOKUP}">{L_BBACCOUNTS_REPORT_BALANCE_LOOKUP}</a>
+    <!-- ENDIF -->
+    <!-- IF S_CAN_VIEW_USERS -->
+        <a class="button2<!-- IF S_REPORT_USER_BALANCE --> active<!-- ENDIF -->" href="{U_REPORT_USER_BALANCE}">{L_BBACCOUNTS_REPORT_USER_BALANCE}</a>
+    <!-- ENDIF -->
 </p>
 
 <!-- IF S_REPORT_TRIAL_BALANCE -->
