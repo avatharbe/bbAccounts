@@ -63,16 +63,20 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Register bbAccounts permissions with phpBB's permission MASK UI.
+	 * Register bbAccounts permissions (a_accounts plus the two view perms:
+	 * u_accounts_view_aggregates for trial-balance / balance-lookup reports
+	 * and u_accounts_view_users for ledger / statement / user-balance reports
+	 * and the memberlist balance badge) with phpBB's permission MASK UI.
 	 * Without this, the perms exist in `phpbb_acl_options` (added by the
-	 * migration) but the ACP permission screen has no entry to grant
-	 * them — the role/group/user tabs show no row at all.
+	 * migration) but the ACP permission screen has no entry to grant them —
+	 * the role/group/user tabs show no row at all.
 	 */
 	public function on_permissions($event): void
 	{
 		$permissions = $event['permissions'];
-		$permissions['a_accounts']      = ['lang' => 'ACL_A_ACCOUNTS',      'cat' => 'misc'];
-		$permissions['u_accounts_view'] = ['lang' => 'ACL_U_ACCOUNTS_VIEW', 'cat' => 'misc'];
+		$permissions['a_accounts']                 = ['lang' => 'ACL_A_ACCOUNTS',                 'cat' => 'misc'];
+		$permissions['u_accounts_view_aggregates'] = ['lang' => 'ACL_U_ACCOUNTS_VIEW_AGGREGATES', 'cat' => 'misc'];
+		$permissions['u_accounts_view_users']      = ['lang' => 'ACL_U_ACCOUNTS_VIEW_USERS',      'cat' => 'misc'];
 		$event['permissions'] = $permissions;
 	}
 
@@ -106,7 +110,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * Visibility: own profile for any logged-in user (matches the UCP
 	 * "My Wallet" trust model — your data is yours to see); other
-	 * profiles only when the viewer has `u_accounts_view`. Anonymous
+	 * profiles only when the viewer has `u_accounts_view_users`. Anonymous
 	 * viewers never see the badge.
 	 */
 	public function on_memberlist_view_profile($event): void
@@ -125,7 +129,7 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 		$is_self  = $viewer_id === $target_user_id;
-		$can_view = $is_self || $this->auth->acl_get('u_accounts_view');
+		$can_view = $is_self || $this->auth->acl_get('u_accounts_view_users');
 		if (!$can_view)
 		{
 			return;
@@ -151,14 +155,16 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 * Inject a "bbAccounts Reports" entry into the standard phpBB
-	 * navbar for users with `u_accounts_view`. Lands them on the FE
-	 * Reports page (the read-only mirror of ACP Reports). Hidden for
-	 * everyone else — assignment is gated on the auth check, so the
-	 * template event partial degrades to nothing without it.
+	 * navbar for users who have either of the bbAccounts read perms
+	 * (`u_accounts_view_aggregates` or `u_accounts_view_users`). Lands
+	 * them on the FE Reports page (the read-only mirror of ACP Reports).
+	 * Hidden for everyone else — assignment is gated on the auth check,
+	 * so the template event partial degrades to nothing without it.
 	 */
 	public function on_page_header(): void
 	{
-		if (!$this->auth->acl_get('u_accounts_view'))
+		if (!$this->auth->acl_get('u_accounts_view_aggregates')
+			&& !$this->auth->acl_get('u_accounts_view_users'))
 		{
 			return;
 		}
