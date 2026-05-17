@@ -165,15 +165,19 @@ span.flatpickr-weekday {
 	border-color: #c0a060 !important;
 }
 
-/* Date-input fields inside any bbAccounts form (UCP statement, FE
- * Reports filters). Browser default is white-on-light, which collides
- * with dark forum styles (pbwow3 etc.). Matched to the Wowhead-
- * tooltip calendar palette so the input + popup share the same look.
- * Class-scoped (`.bbaccounts-form`) so it doesn't bleed into unrelated
- * phpBB pages. Both the bare <input type="date"> selector and the
- * `.flatpickr-input` class catch the field before and after flatpickr
- * has initialised (the lib keeps the original input + adds the class).
+/* Filter input fields inside any bbAccounts form (UCP statement, FE
+ * Reports filters). Browser default is white-on-light, and pbwow3 only
+ * styles `.inputbox` — so bare text/number/date inputs inherit the
+ * style's brown body-text colour on a white default background, which
+ * is unreadable. Matched to the Wowhead-tooltip calendar palette so
+ * the inputs + flatpickr popup share the same look. Class-scoped
+ * (`.bbaccounts-form`) so it doesn't bleed into unrelated phpBB pages.
+ * Both the bare <input type="date"> selector and the `.flatpickr-input`
+ * class catch the date field before and after flatpickr has initialised
+ * (the lib keeps the original input + adds the class).
  */
+.bbaccounts-form input[type="text"],
+.bbaccounts-form input[type="number"],
 .bbaccounts-form input[type="date"],
 .bbaccounts-form input.flatpickr-input {
 	background: #1c1c1c !important;
@@ -181,6 +185,8 @@ span.flatpickr-weekday {
 	border: 1px solid #c0a060 !important;
 	padding: 3px 8px !important;
 }
+.bbaccounts-form input[type="text"]:focus,
+.bbaccounts-form input[type="number"]:focus,
 .bbaccounts-form input[type="date"]:focus,
 .bbaccounts-form input.flatpickr-input:focus {
 	border-color: #ffd700 !important;
