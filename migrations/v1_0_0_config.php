@@ -43,15 +43,12 @@ class v1_0_0_config extends \phpbb\db\migration\migration
 			// Custom permissions kept lean: admin perm for write paths,
 			// user perm for read access to other users' data (Reports +
 			// other-profile balance badge). UCP "My Wallet" is intentionally
-			// NOT permission-gated — bbPatreon's pattern: any logged-in
-			// user sees their own data, the extension being enabled is the
-			// gate. `u_accounts_view` (rather than `m_accounts_view`)
-			// because phpBB strictly maps the perm prefix to a UI tab —
-			// `u_*` perms surface in User permissions, where they're easy
-			// to grant; `m_*` would be hidden behind per-forum mod scoping.
-			// Cleanup line first removes the legacy m_accounts_view row in
-			// case the install has it from before the rename.
-			['permission.remove', ['m_accounts_view']],
+			// NOT permission-gated — any logged-in user sees their own
+			// data, the extension being enabled is the gate. `u_accounts_view`
+			// (rather than `m_accounts_view`) because phpBB strictly maps
+			// the perm prefix to a UI tab — `u_*` perms surface in User
+			// permissions, where they're easy to grant; `m_*` would be
+			// hidden behind per-forum mod scoping.
 			['permission.add', ['a_accounts',      true]],
 			['permission.add', ['u_accounts_view', true]],
 			['permission.permission_set', ['ROLE_ADMIN_FULL', 'a_accounts',      'role']],
@@ -66,7 +63,6 @@ class v1_0_0_config extends \phpbb\db\migration\migration
 	{
 		return [
 			['permission.remove', ['u_accounts_view']],
-			['permission.remove', ['m_accounts_view']],
 			['permission.remove', ['a_accounts']],
 			['config.remove', ['bbaccounts_per_page']],
 			['config.remove', ['bbaccounts_currency_default']],
@@ -76,9 +72,8 @@ class v1_0_0_config extends \phpbb\db\migration\migration
 
 	/**
 	 * Seed POINTS plus any other currency_code already referenced by an
-	 * account row. The backfill scan keeps installs that hand-edited
-	 * additional pools (pre-currencies-table) from instantly tripping
-	 * the service-layer guard once this migration runs.
+	 * account row, so the service-layer "currency must be active" guard
+	 * has every needed pool on hand the moment the migration finishes.
 	 */
 	public function seed_currencies()
 	{
