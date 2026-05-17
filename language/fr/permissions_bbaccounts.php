@@ -16,6 +16,7 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, [
-	'ACL_A_ACCOUNTS'      => ['lang' => 'Peut gérer bbAccounts (accès complet)'],
-	'ACL_U_ACCOUNTS_VIEW' => ['lang' => 'Peut consulter les rapports bbAccounts (soldes des autres utilisateurs)'],
+	'ACL_A_ACCOUNTS'                 => ['lang' => 'bbAccounts: Manage (full access)'],
+	'ACL_U_ACCOUNTS_VIEW_AGGREGATES' => ['lang' => 'bbAccounts: View aggregate reports (trial balance, balance lookup)'],
+	'ACL_U_ACCOUNTS_VIEW_USERS'      => ['lang' => 'bbAccounts: View per-user data (ledger, statements, profile badge)'],
 ]);
