@@ -8,15 +8,13 @@
 namespace avathar\bbaccounts\service;
 
 /**
- * Per-pool balance summary for a user, used by lightweight read-only
- * surfaces (post-profile badge, portal widgets, future viewtopic blocks).
+ * Per-pool balance summary for a user, folded from
+ * `ledger::get_subledger_account_balances()` into one row per
+ * currency_code (sum of closing balances).
  *
- * Wraps `ledger::get_subledger_account_balances()` and folds its
- * per-account breakdown into one row per currency_code (sum of closing
- * balances). Profile views are hot, so the result is cached per user
- * with a short TTL — tradeoff: a fresh journal entry takes up to TTL
- * seconds to appear in the badge, which is acceptable here. The UCP
- * "My Wallet" surface continues to read live for accuracy.
+ * Cached per user with a short TTL — a fresh journal entry takes up to
+ * TTL seconds to appear, which is the price for keeping hot read paths
+ * cheap. Callers that need live numbers must read the ledger directly.
  */
 class balance_summary
 {
@@ -79,10 +77,9 @@ class balance_summary
 	}
 
 	/**
-	 * Drop the cached summary for a user — call from any code path that
-	 * posts a journal entry against the user's subledger if up-to-the-
-	 * minute accuracy matters before the next TTL window. Phase 3 callers
-	 * may not need this; documenting it keeps the contract clear.
+	 * Drop the cached summary for a user. Call after posting a journal
+	 * entry against the user's subledger when up-to-the-minute accuracy
+	 * matters before the next TTL window expires.
 	 */
 	public function invalidate(int $user_id): void
 	{

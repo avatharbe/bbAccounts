@@ -10,13 +10,10 @@ namespace avathar\bbaccounts\service;
 /**
  * Parse + validate a journal-entry CSV in one pass.
  *
- * The importer reads the file, validates every row and every entry, and
- * returns a normalized structure the ACP layer can render as a preview.
- * It does not commit anything — Task 8 (#74) wraps the create_entry()
- * loop in a transaction. This service only reads from the DB
- * (`accounts`, `users`) to resolve codes and user_ids.
- *
- * Format spec: see issue #60.
+ * Returns a normalized structure for the ACP preview/commit flow; this
+ * service never writes — the controller wraps `create_entry()` in a
+ * transaction. DB reads (`accounts`, `users`) are batched per import to
+ * stay O(1) regardless of row count.
  */
 class csv_importer
 {

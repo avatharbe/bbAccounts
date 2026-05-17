@@ -613,12 +613,9 @@ class acp_controller
 	}
 
 	/**
-	 * CSV import — entry point + upload form.
-	 *
-	 * Task 5 (#71) ships only the form scaffold + missing-file guard. The
-	 * actual parser, validator, preview, and transactional commit land in
-	 * Tasks 6–8. This handler stays in the upload state until a file is
-	 * present; once one is, control will pass to the parser added next.
+	 * CSV import dispatcher: upload form → parsed preview → confirm-commit.
+	 * Confirm replays a cached parsed payload by token rather than asking
+	 * the admin to upload the same file twice.
 	 */
 	protected function render_csv_import_form(): void
 	{
@@ -681,10 +678,9 @@ class acp_controller
 
 	/**
 	 * Render the parsed import as a per-entry preview, then cache the
-	 * payload so the Confirm step (Task 8 / #74) can replay it without a
-	 * second upload. Token + 10-minute TTL — long enough for an admin to
-	 * review and click Confirm, short enough that stale uploads don't
-	 * accumulate.
+	 * payload so Confirm can replay it without a second upload. Token
+	 * + 10-minute TTL — long enough for an admin to review and click
+	 * Confirm, short enough that stale uploads don't accumulate.
 	 */
 	protected function render_csv_import_preview(array $parsed, string $filename): void
 	{
@@ -793,8 +789,9 @@ class acp_controller
 	protected function process_csv_import_commit(array $parsed, string $cache_key): void
 	{
 		// Pre-flight: re-verify cleanliness. The cache should already be
-		// clean (Task 7 only caches when is_clean()), but this guards
-		// against a tampered token or schema change between parse + commit.
+		// clean (the preview step only caches when is_clean()), but this
+		// guards against a tampered token or schema change between parse
+		// + commit.
 		if (!$this->csv_importer->is_clean($parsed))
 		{
 			$this->cache->destroy($cache_key);
@@ -1372,10 +1369,6 @@ class acp_controller
 		]);
 	}
 
-	/**
-	 * Single-account balance lookup: account + optional as_of → one signed
-	 * balance card. Cheap spot-check vs running the full trial balance.
-	 */
 	protected function display_balance_lookup(): void
 	{
 		add_form_key('bbaccounts_balance_lookup');
@@ -1459,11 +1452,6 @@ class acp_controller
 		]);
 	}
 
-	/**
-	 * User-balance lookup: subledger account + username + optional as_of →
-	 * one signed balance card. Cheap spot-check vs paging the full subledger
-	 * statement.
-	 */
 	protected function display_user_balance_lookup(): void
 	{
 		add_form_key('bbaccounts_user_balance');
@@ -1565,10 +1553,6 @@ class acp_controller
 		]);
 	}
 
-	/**
-	 * Index of every account in the chart, keyed by account_id, used by both
-	 * report views to render dropdowns and to label per-line account info.
-	 */
 	protected function load_accounts_map(): array
 	{
 		$sql = 'SELECT account_id, account_code, account_name, account_type, currency_code, is_active
@@ -1586,8 +1570,8 @@ class acp_controller
 
 	/**
 	 * Whitelist a posted enum value against a closed set; abort the ACP
-	 * request if the input is outside the set. The HTML <select> only
-	 * constrains the browser path — a hand-crafted POST bypasses it.
+	 * request if the input is outside it. The HTML <select> only constrains
+	 * the browser path — a hand-crafted POST bypasses it.
 	 */
 	protected function validate_enum(string $value, array $allowed): string
 	{

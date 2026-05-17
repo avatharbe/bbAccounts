@@ -67,14 +67,10 @@ class ucp_controller
 	}
 
 	/**
-	 * Build a URL targeting our UCP statement mode with paging /
-	 * filter params. Only used by the pagination helper — every other
-	 * URL on the UCP surfaces is either implicit (form action defaults
-	 * to current URL) or supplied by phpBB (`$this->u_action`).
-	 *
-	 * `append_sid()` needs the full path + extension
-	 * (`./ucp.php`); passing just `'ucp'` gives a relative URL with no
-	 * extension, which the browser 404s.
+	 * Build a URL targeting our UCP statement mode with paging / filter
+	 * params. `append_sid()` needs the full path + extension (`./ucp.php`);
+	 * passing just `'ucp'` gives a relative URL with no extension, which
+	 * the browser 404s.
 	 */
 	protected function statement_url(array $extra = []): string
 	{
@@ -117,12 +113,6 @@ class ucp_controller
 		]);
 	}
 
-	/**
-	 * Paginated own-subledger statement. Mirrors the ACP statement view
-	 * (controller/acp_controller.php::display_subledger_statement) but
-	 * keys on the logged-in user_id rather than a free-form picker, and
-	 * omits the user-id resolution / username header.
-	 */
 	public function display_statement(): void
 	{
 		$this->language->add_lang(['info_ucp_bbaccounts', 'info_acp_bbaccounts'], 'avathar/bbaccounts');
@@ -219,10 +209,6 @@ class ucp_controller
 		]);
 	}
 
-	/**
-	 * Index of every account in the chart, keyed by account_id, used to
-	 * label per-line account info on the statement view.
-	 */
 	protected function load_accounts_map(): array
 	{
 		$sql = 'SELECT account_id, account_code, account_name, account_type, currency_code, is_active

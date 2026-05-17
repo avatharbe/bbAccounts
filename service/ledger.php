@@ -44,14 +44,11 @@ class ledger
 	}
 
 	/**
-	 * Programmatic chart-of-accounts seed for consumer extensions.
+	 * Programmatic chart-of-accounts seed for external callers.
 	 *
-	 * Consumers (ultimatepoints, bbDKP, …) call this from their install
-	 * migrations instead of writing directly into bbaccounts_accounts —
-	 * the table layout is not part of the public contract (see
-	 * contrib/events.md §1.2). Every validation here is the same set the
-	 * ACP "Add account" form enforces, just available without the HTTP
-	 * round-trip.
+	 * Runs the same validation set as the ACP "Add account" form so callers
+	 * can stay out of bbaccounts_accounts directly — the table layout is
+	 * not part of the public contract.
 	 *
 	 * @throws \InvalidArgumentException on any validation failure.
 	 * @return int new account_id
@@ -135,10 +132,8 @@ class ledger
 	}
 
 	/**
-	 * Read-side enumeration for consumer extensions populating UI
-	 * pickers (e.g. UltimatePoints' bbAccounts mapping ACP page).
-	 * Returns inactive accounts as well — admins may need to see them
-	 * for re-mapping or historic-balance inspection.
+	 * Enumerate accounts for picker UIs. Returns inactive accounts as well —
+	 * admins need to see them for re-mapping and historic-balance inspection.
 	 *
 	 * @param string      $account_type   '' = no filter; otherwise must be in VALID_ACCOUNT_TYPES.
 	 * @param string|null $subledger_type null = no filter. '' = match accounts with no subledger.
@@ -337,8 +332,6 @@ class ledger
 
 	/**
 	 * Paginated journal-entry list with the is_reversed flag derived in SQL.
-	 * Centralising the EXISTS subquery here keeps Phase 2 callers from
-	 * duplicating it (issue #59 cleanup item 6).
 	 *
 	 * @return array{rows: array<int, array<string, string|int>>, total: int}
 	 */
@@ -424,12 +417,8 @@ class ledger
 	}
 
 	/**
-	 * For a phpBB user, return one summary row per account they have any
-	 * activity in (within the optional [from, to] range), with opening,
-	 * period debit/credit, and closing balance on each row.
-	 *
-	 * Used by the ACP subledger statement to render a header strip above
-	 * the line-level detail.
+	 * One summary row per account the user has activity in within the
+	 * optional [from, to] range — opening, period debit/credit, and closing.
 	 */
 	public function get_subledger_account_balances(int $user_id, int $from = 0, int $to = 0): array
 	{
@@ -698,9 +687,8 @@ class ledger
 
 	/**
 	 * True iff the currency exists in the managed currencies table and is
-	 * marked active. When the table parameter is unset (legacy callers
-	 * that constructed the service with the old four-arg signature) the
-	 * check is skipped — keeps the optional-parameter constructor sane.
+	 * marked active. Skipped when the currencies table parameter is unset,
+	 * so callers using the optional-parameter constructor still work.
 	 */
 	protected function currency_is_active(string $code): bool
 	{

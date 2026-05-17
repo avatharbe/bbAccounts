@@ -8,23 +8,14 @@
 namespace avathar\bbaccounts\portal\module;
 
 /**
- * bbGuild portal module: own-balance summary.
+ * bbGuild portal module: own-balance summary. Registered against
+ * bbGuild's portal-module tagged-service contract (`bbguild.portal.module`)
+ * and sourced from the balance_summary service so it shares the cache
+ * with the post-profile badge.
  *
- * Registered against bbGuild's portal-module tagged-service contract
- * (`bbguild.portal.module`). Renders one row per pool (currency_code)
- * for the logged-in user, sourced from the bbAccounts balance_summary
- * service so the rendering is identical (and shares the cache) with
- * the post-profile badge from #82.
- *
- * Visibility: any logged-in user sees their own balances. Anonymous
- * viewers get a short "log in" placeholder — the module always emits
- * *something* because portal blocks aren't conditionally hidden by
- * bbGuild today; an empty block would just look broken.
- *
- * Leaderboard mode (top-N balances on a configured account, admin-
- * picked per portal block instance) is tracked separately — it adds
- * an ACP config form and a per-module_id storage path the own-balance
- * mode doesn't need.
+ * Anonymous viewers get a short "log in" placeholder — the module
+ * always emits *something* because portal blocks aren't conditionally
+ * hidden by bbGuild today; an empty block would just look broken.
  */
 class bbaccounts_balance extends \avathar\bbguild\portal\modules\module_base
 {
@@ -73,9 +64,6 @@ class bbaccounts_balance extends \avathar\bbguild\portal\modules\module_base
 		return '@avathar_bbaccounts/portal/bbaccounts_balance.html';
 	}
 
-	/**
-	 * Common template prep for both column flavours.
-	 */
 	protected function prepare_template(): void
 	{
 		$user_id = (int) $this->user->data['user_id'];

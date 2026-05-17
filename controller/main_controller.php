@@ -8,19 +8,10 @@
 namespace avathar\bbaccounts\controller;
 
 /**
- * Front-end Reports controller (mod-gated).
- *
- * Read-only mirror of the ACP Reports module. Lifted-and-shifted from
- * `acp_controller`'s display methods (per #84's "lift-and-shift first;
- * refactor to a shared renderer if both controllers grow"); URL
- * generation swapped to phpBB's `controller\helper::route()` so the FE
- * sub-mode buttons + pagination links resolve to `/app.php/bbaccounts/
- * reports/...` rather than the ACP `?i=…&mode=…` shape.
- *
- * Write paths from the ACP (chart of accounts, journal create/reverse,
- * currencies, CSV import) are deliberately NOT mirrored here. End
- * users without `u_accounts_view` get a 403 from the auth gate at
- * the top of `handle()`.
+ * Front-end Reports controller (mod-gated). Read-only mirror of the ACP
+ * Reports module — write paths (chart of accounts, journal create/reverse,
+ * currencies, CSV import) are deliberately not exposed here. Users without
+ * `u_accounts_view` get a 403 from the auth gate at the top of `handle()`.
  */
 class main_controller
 {

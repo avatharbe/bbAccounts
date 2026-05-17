@@ -64,12 +64,9 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 * Register bbAccounts permissions with phpBB's permission MASK UI.
-	 * Without this, the perms exist in `phpbb_acl_options` (added by
-	 * the migration) but the ACP permission screen has no entry to
-	 * grant them — the role/group/user tabs show no row at all.
-	 *
-	 * Both perms land in the stock `misc` category. Lang keys are
-	 * defined in language/en/permissions_bbaccounts.php.
+	 * Without this, the perms exist in `phpbb_acl_options` (added by the
+	 * migration) but the ACP permission screen has no entry to grant
+	 * them — the role/group/user tabs show no row at all.
 	 */
 	public function on_permissions($event): void
 	{
