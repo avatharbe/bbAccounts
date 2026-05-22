@@ -26,7 +26,7 @@ class remove_bbguild_module_pass implements CompilerPassInterface
 {
 	public function process(ContainerBuilder $container): void
 	{
-			if (!class_exists('avathar\\bbguild\\portal\\modules\\module_base'))
+		if (!class_exists('avathar\\bbguild\\portal\\modules\\module_base'))
 		{
 			if ($container->hasDefinition('avathar.bbaccounts.portal.module.balance'))
 			{
