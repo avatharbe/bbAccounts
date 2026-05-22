@@ -34,7 +34,10 @@ class v1_0_0_modules extends \phpbb\db\migration\migration
 		        WHERE module_class = 'ucp'
 		          AND module_basename = '\\\\avathar\\\\bbaccounts\\\\ucp\\\\main_module'
 		          AND module_mode = 'wallet'";
-		return (bool) $this->db->sql_fetchfield('1', false, $this->db->sql_query_limit($sql, 1));
+		$result = $this->db->sql_query_limit($sql, 1);
+		$row    = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		return $row !== false;
 	}
 
 	public function update_data()

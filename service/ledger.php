@@ -341,7 +341,9 @@ class ledger
 		$limit = max(1, $limit);
 
 		$sql = 'SELECT COUNT(*) AS c FROM ' . $this->journal_table;
-		$total = (int) $this->db->sql_fetchfield('c', false, $this->db->sql_query($sql));
+		$result = $this->db->sql_query($sql);
+		$total  = (int) $this->db->sql_fetchfield('c', false, $result);
+		$this->db->sql_freeresult($result);
 
 		// CASE WHEN EXISTS — wrap so the result is an int (0/1) on every
 		// DBAL phpBB supports. Bare EXISTS returns boolean 't'/'f' on

@@ -198,7 +198,10 @@ class acp_controller
 			}
 			// Reject duplicate
 			$sql = 'SELECT 1 FROM ' . $this->currencies_table . " WHERE currency_code = '" . $this->db->sql_escape($new_code) . "'";
-			if ($this->db->sql_fetchfield('1', false, $this->db->sql_query_limit($sql, 1)))
+			$result = $this->db->sql_query_limit($sql, 1);
+			$exists = $this->db->sql_fetchrow($result) !== false;
+			$this->db->sql_freeresult($result);
+			if ($exists)
 			{
 				trigger_error($this->language->lang('BBACCOUNTS_CURRENCY_DUPLICATE') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
@@ -233,7 +236,10 @@ class acp_controller
 	protected function currency_in_use(string $code): bool
 	{
 		$sql = 'SELECT 1 FROM ' . $this->accounts_table . " WHERE currency_code = '" . $this->db->sql_escape($code) . "'";
-		return (bool) $this->db->sql_fetchfield('1', false, $this->db->sql_query_limit($sql, 1));
+		$result = $this->db->sql_query_limit($sql, 1);
+		$in_use = $this->db->sql_fetchrow($result) !== false;
+		$this->db->sql_freeresult($result);
+		return $in_use;
 	}
 
 	/**
@@ -291,7 +297,9 @@ class acp_controller
 		$start = max(0, $this->request->variable('start', 0));
 
 		$sql = 'SELECT COUNT(*) AS c FROM ' . $this->accounts_table;
-		$total = (int) $this->db->sql_fetchfield('c', false, $this->db->sql_query($sql));
+		$result = $this->db->sql_query($sql);
+		$total  = (int) $this->db->sql_fetchfield('c', false, $result);
+		$this->db->sql_freeresult($result);
 
 		// Single batched aggregate so the per-row balance column is O(1) DB
 		// queries regardless of account count. get_trial_balance() does the
@@ -372,7 +380,9 @@ class acp_controller
 			}
 			// Lock immutable fields if there is any journal activity
 			$sql = 'SELECT 1 FROM ' . $this->lines_table . ' WHERE account_id = ' . $account_id;
-			$is_locked = (bool) $this->db->sql_fetchfield('1', false, $this->db->sql_query_limit($sql, 1));
+			$result    = $this->db->sql_query_limit($sql, 1);
+			$is_locked = $this->db->sql_fetchrow($result) !== false;
+			$this->db->sql_freeresult($result);
 		}
 
 		// Parent dropdown: top-level + same-currency only
@@ -454,7 +464,9 @@ class acp_controller
 		{
 			// Allow editing immutable fields only if no journal activity
 			$sql = 'SELECT 1 FROM ' . $this->lines_table . ' WHERE account_id = ' . $account_id;
-			$locked = (bool) $this->db->sql_fetchfield('1', false, $this->db->sql_query_limit($sql, 1));
+			$result = $this->db->sql_query_limit($sql, 1);
+			$locked = $this->db->sql_fetchrow($result) !== false;
+			$this->db->sql_freeresult($result);
 			if (!$locked)
 			{
 				$data['account_code']   = $this->request->variable('account_code', '', true);
