@@ -27,6 +27,12 @@
         "display-name": "bbAccounts",
         "soft-require": {
             "phpbb/phpbb": ">=3.3.0,<3.4.0@dev"
+        },
+        "version-check": {
+            "host": "www.avathar.be",
+            "directory": "/versioncheck",
+            "filename": "bbaccounts.json",
+            "ssl": true
         }
     }
 }
