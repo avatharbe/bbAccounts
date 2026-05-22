@@ -352,10 +352,10 @@ class csv_importer
 		{
 			return [];
 		}
-		$escaped = array_map(fn ($c) => "'" . $this->db->sql_escape((string) $c) . "'", $codes);
+		$codes = array_map('strval', $codes);
 		$sql = 'SELECT account_id, account_code, account_name, account_type, currency_code, subledger_type, is_active
 		        FROM ' . $this->accounts_table . '
-		        WHERE account_code IN (' . implode(', ', $escaped) . ')';
+		        WHERE ' . $this->db->sql_in_set('account_code', $codes);
 		$result = $this->db->sql_query($sql);
 		$map = [];
 		while ($row = $this->db->sql_fetchrow($result))

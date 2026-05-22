@@ -78,12 +78,10 @@ class main_controller
 		$can_users      = (bool) $this->auth->acl_get('u_accounts_view_users');
 		if (!$can_aggregates && !$can_users)
 		{
-			trigger_error('NOT_AUTHORISED');
+			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 		}
 
 		$this->language->add_lang('info_acp_bbaccounts', 'avathar/bbaccounts');
-
-		$u_back = $this->report_url('trial_balance');
 
 		$this->template->assign_vars([
 			'U_REPORT_TRIAL_BALANCE'  => $this->report_url('trial_balance'),
@@ -104,7 +102,7 @@ class main_controller
 			case 'account_ledger':
 				if (!$can_users)
 				{
-					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 				}
 				$this->template->assign_var('S_REPORT_ACCOUNT_LEDGER', true);
 				$this->display_account_ledger();
@@ -112,7 +110,7 @@ class main_controller
 			case 'subledger':
 				if (!$can_users)
 				{
-					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 				}
 				$this->template->assign_var('S_REPORT_SUBLEDGER', true);
 				$this->display_subledger_statement();
@@ -120,7 +118,7 @@ class main_controller
 			case 'balance_lookup':
 				if (!$can_aggregates)
 				{
-					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 				}
 				$this->template->assign_var('S_REPORT_BALANCE_LOOKUP', true);
 				$this->display_balance_lookup();
@@ -128,7 +126,7 @@ class main_controller
 			case 'user_balance_lookup':
 				if (!$can_users)
 				{
-					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 				}
 				$this->template->assign_var('S_REPORT_USER_BALANCE', true);
 				$this->display_user_balance_lookup();
@@ -137,7 +135,7 @@ class main_controller
 			default:
 				if (!$can_aggregates)
 				{
-					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
+					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 				}
 				$this->template->assign_var('S_REPORT_TRIAL_BALANCE', true);
 				$this->display_trial_balance();
@@ -545,8 +543,7 @@ class main_controller
 		}
 		if (!check_form_key('bbaccounts_fe_balance_lookup'))
 		{
-			$u_form = $this->report_url('balance_lookup');
-			trigger_error($this->language->lang('FORM_INVALID') . '<br /><br /><a href="' . $u_form . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>', E_USER_WARNING);
+			throw new \phpbb\exception\http_exception(403, 'FORM_INVALID');
 		}
 
 		if (!isset($valid_account_ids[$posted_account_id]))
@@ -622,8 +619,7 @@ class main_controller
 		}
 		if (!check_form_key('bbaccounts_fe_user_balance'))
 		{
-			$u_form = $this->report_url('user_balance_lookup');
-			trigger_error($this->language->lang('FORM_INVALID') . '<br /><br /><a href="' . $u_form . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>', E_USER_WARNING);
+			throw new \phpbb\exception\http_exception(403, 'FORM_INVALID');
 		}
 
 		if ($username === '')
