@@ -183,7 +183,7 @@ class acp_controller
 	{
 		if (!check_form_key('bbaccounts_currency'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		$name      = $this->request->variable('currency_name', '', true);
@@ -431,7 +431,7 @@ class acp_controller
 	{
 		if (!check_form_key('bbaccounts_account'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		$data = [
@@ -635,7 +635,7 @@ class acp_controller
 		{
 			if (!check_form_key('bbaccounts_csv_import'))
 			{
-				trigger_error('FORM_INVALID', E_USER_WARNING);
+				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 			$token = $this->request->variable('confirm_token', '');
 			$cache_key = '_bbaccounts_csv_' . $token;
@@ -655,7 +655,7 @@ class acp_controller
 		}
 		if (!check_form_key('bbaccounts_csv_import'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		$file = $this->request->file('csv_file');
@@ -890,7 +890,7 @@ class acp_controller
 	{
 		if (!check_form_key('bbaccounts_journal'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		$entry_date_iso   = $this->request->variable('entry_date', date('Y-m-d'));
@@ -1423,7 +1423,7 @@ class acp_controller
 		}
 		if (!check_form_key('bbaccounts_balance_lookup'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		if (!isset($valid_account_ids[$posted_account_id]))
@@ -1500,7 +1500,7 @@ class acp_controller
 		}
 		if (!check_form_key('bbaccounts_user_balance'))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Validate inputs.
@@ -1577,7 +1577,7 @@ class acp_controller
 	{
 		if (!in_array($value, $allowed, true))
 		{
-			trigger_error('FORM_INVALID', E_USER_WARNING);
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 		return $value;
 	}

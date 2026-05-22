@@ -63,10 +63,8 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Register bbAccounts permissions (a_accounts plus the two view perms:
-	 * u_accounts_view_aggregates for trial-balance / balance-lookup reports
-	 * and u_accounts_view_users for ledger / statement / user-balance reports
-	 * and the memberlist balance badge) with phpBB's permission MASK UI.
+	 * Register bbAccounts permissions with phpBB's permission MASK UI.
+	 *
 	 * Without this, the perms exist in `phpbb_acl_options` (added by the
 	 * migration) but the ACP permission screen has no entry to grant them —
 	 * the role/group/user tabs show no row at all.
@@ -90,6 +88,14 @@ class listener implements EventSubscriberInterface
 		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
+	/**
+	 * When phpBB deletes one or more users, reassigns any journal lines they owned to the
+	 * anonymous user (ID 1). Preserves the immutable double-entry journal —
+	 * accounting history can't be deleted, only re-pointed to anonymous
+	 *
+	 * @param $event
+	 * @return void
+	 */
 	public function on_user_delete($event): void
 	{
 		$user_ids = (array) $event['user_ids'];

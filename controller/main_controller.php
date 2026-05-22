@@ -8,12 +8,16 @@
 namespace avathar\bbaccounts\controller;
 
 /**
- * Front-end Reports controller (mod-gated). Read-only mirror of the ACP
- * Reports module — write paths (chart of accounts, journal create/reverse,
- * currencies, CSV import) are deliberately not exposed here. Users without
- * `u_accounts_view_aggregates` or `u_accounts_view_users` get a 403 from
- * the auth gate at the top of `handle()`. The per-report switch enforces
- * the specific perm needed for each sub-report.
+ * Front-end Reports controller (mod-gated).
+ * Read-only mirror of the ACP Reports module
+ * write paths (chart of accounts, journal create/reverse,
+ * currencies, CSV import) are deliberately not exposed here.
+ *
+ * Users without
+ * `u_accounts_view_aggregates` or `u_accounts_view_users`
+ * get a 403 from auth gate at the top of `handle()`.
+ *
+ * The per-report switch enforces specific perm needed for each sub-report.
  */
 class main_controller
 {
@@ -74,10 +78,12 @@ class main_controller
 		$can_users      = (bool) $this->auth->acl_get('u_accounts_view_users');
 		if (!$can_aggregates && !$can_users)
 		{
-			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+			trigger_error('NOT_AUTHORISED');
 		}
 
 		$this->language->add_lang('info_acp_bbaccounts', 'avathar/bbaccounts');
+
+		$u_back = $this->report_url('trial_balance');
 
 		$this->template->assign_vars([
 			'U_REPORT_TRIAL_BALANCE'  => $this->report_url('trial_balance'),
@@ -98,7 +104,7 @@ class main_controller
 			case 'account_ledger':
 				if (!$can_users)
 				{
-					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
 				}
 				$this->template->assign_var('S_REPORT_ACCOUNT_LEDGER', true);
 				$this->display_account_ledger();
@@ -106,7 +112,7 @@ class main_controller
 			case 'subledger':
 				if (!$can_users)
 				{
-					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
 				}
 				$this->template->assign_var('S_REPORT_SUBLEDGER', true);
 				$this->display_subledger_statement();
@@ -114,7 +120,7 @@ class main_controller
 			case 'balance_lookup':
 				if (!$can_aggregates)
 				{
-					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
 				}
 				$this->template->assign_var('S_REPORT_BALANCE_LOOKUP', true);
 				$this->display_balance_lookup();
@@ -122,7 +128,7 @@ class main_controller
 			case 'user_balance_lookup':
 				if (!$can_users)
 				{
-					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
 				}
 				$this->template->assign_var('S_REPORT_USER_BALANCE', true);
 				$this->display_user_balance_lookup();
@@ -131,7 +137,7 @@ class main_controller
 			default:
 				if (!$can_aggregates)
 				{
-					throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+					trigger_error($this->language->lang('NOT_AUTHORISED') . '<br /><br /><a href="' . $u_back . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>');
 				}
 				$this->template->assign_var('S_REPORT_TRIAL_BALANCE', true);
 				$this->display_trial_balance();
@@ -539,7 +545,8 @@ class main_controller
 		}
 		if (!check_form_key('bbaccounts_fe_balance_lookup'))
 		{
-			throw new \phpbb\exception\http_exception(403, 'FORM_INVALID');
+			$u_form = $this->report_url('balance_lookup');
+			trigger_error($this->language->lang('FORM_INVALID') . '<br /><br /><a href="' . $u_form . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>', E_USER_WARNING);
 		}
 
 		if (!isset($valid_account_ids[$posted_account_id]))
@@ -615,7 +622,8 @@ class main_controller
 		}
 		if (!check_form_key('bbaccounts_fe_user_balance'))
 		{
-			throw new \phpbb\exception\http_exception(403, 'FORM_INVALID');
+			$u_form = $this->report_url('user_balance_lookup');
+			trigger_error($this->language->lang('FORM_INVALID') . '<br /><br /><a href="' . $u_form . '">&laquo; ' . $this->language->lang('BACK_TO_PREV') . '</a>', E_USER_WARNING);
 		}
 
 		if ($username === '')
