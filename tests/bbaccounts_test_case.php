@@ -203,11 +203,13 @@ abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
                 debit             decimal(20,2)         NOT NULL DEFAULT '0.00',
                 credit            decimal(20,2)         NOT NULL DEFAULT '0.00',
                 subledger_user_id mediumint(8) unsigned NOT NULL DEFAULT 0,
+                subledger_player_id mediumint(8) unsigned NOT NULL DEFAULT 0,
                 memo              varchar(255)          NOT NULL DEFAULT '',
                 PRIMARY KEY (line_id),
                 KEY journal_id (journal_id),
                 KEY account_id (account_id),
-                KEY subledger_user_id (subledger_user_id)
+                KEY subledger_user_id (subledger_user_id),
+                KEY subledger_player_id (subledger_player_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
     }
