@@ -566,6 +566,113 @@ class ledger
 	}
 
 	/**
+	 * Per-character analog of get_subledger_balance(). Sums journal lines for
+	 * the given account where subledger_player_id = $player_id, returns the
+	 * signed balance via normal_balance().
+	 */
+	public function get_subledger_balance_by_character(int $account_id, int $player_id, int $as_of = 0): string
+	{
+		$account = $this->load_account($account_id);
+		if ($account === null)
+		{
+			throw new \InvalidArgumentException("Account {$account_id} not found.");
+		}
+
+		[$dr, $cr] = $this->sum_lines_for_account($account_id, 0, $as_of, $player_id);
+		return $this->normal_balance($account['account_type'], $dr, $cr);
+	}
+
+	/**
+	 * Per-character analog of get_subledger_account_balances(). Returns one
+	 * summary row per character-subledger account the player has activity in
+	 * within the optional [from, to] range — opening, period debit/credit,
+	 * and closing.
+	 *
+	 * Mirrors the existing user-keyed method's shape exactly so consumers
+	 * can use them interchangeably depending on subledger source.
+	 */
+	public function get_subledger_account_balances_by_character(int $player_id, int $from = 0, int $to = 0): array
+	{
+		if ($player_id <= 0)
+		{
+			return [];
+		}
+
+		// Find every character-subledger account this player has touched within the cutoff
+		$where = 'l.subledger_player_id = ' . $player_id;
+		if ($to > 0)
+		{
+			$where .= ' AND j.entry_date <= ' . $to;
+		}
+		$sql = 'SELECT DISTINCT l.account_id
+                FROM ' . $this->lines_table . ' l
+                INNER JOIN ' . $this->journal_table . ' j ON j.journal_id = l.journal_id
+                WHERE ' . $where;
+		$result = $this->db->sql_query($sql);
+		$account_ids = [];
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$account_ids[] = (int) $row['account_id'];
+		}
+		$this->db->sql_freeresult($result);
+
+		if (empty($account_ids))
+		{
+			return [];
+		}
+
+		$accounts = [];
+		foreach ($account_ids as $aid)
+		{
+			$account = $this->load_account($aid);
+			if ($account === null)
+			{
+				continue;
+			}
+
+			$opening = $from > 0
+				? $this->get_subledger_balance_by_character($aid, $player_id, $from - 1)
+				: '0.00';
+
+			$closing = $this->get_subledger_balance_by_character($aid, $player_id, $to);
+
+			$period_where = 'l.account_id = ' . $aid . ' AND l.subledger_player_id = ' . $player_id;
+			if ($from > 0)
+			{
+				$period_where .= ' AND j.entry_date >= ' . $from;
+			}
+			if ($to > 0)
+			{
+				$period_where .= ' AND j.entry_date <= ' . $to;
+			}
+
+			$sql = 'SELECT COALESCE(SUM(l.debit), 0) AS dr, COALESCE(SUM(l.credit), 0) AS cr
+                    FROM ' . $this->lines_table . ' l
+                    INNER JOIN ' . $this->journal_table . ' j ON j.journal_id = l.journal_id
+                    WHERE ' . $period_where;
+			$row = $this->db->sql_fetchrow($this->db->sql_query($sql));
+			$period_debit  = bcadd((string) $row['dr'], '0', 2);
+			$period_credit = bcadd((string) $row['cr'], '0', 2);
+
+			$accounts[] = [
+				'account_id'    => $aid,
+				'account_code'  => $account['account_code'],
+				'account_name'  => $account['account_name'],
+				'account_type'  => $account['account_type'],
+				'currency_code' => $account['currency_code'],
+				'opening'       => $opening,
+				'period_debit'  => $period_debit,
+				'period_credit' => $period_credit,
+				'closing'       => $closing,
+			];
+		}
+
+		usort($accounts, static fn ($a, $b) => strcmp($a['account_code'], $b['account_code']));
+
+		return $accounts;
+	}
+
+	/**
 	 * Rewrite all journal_lines where subledger_player_id = $player_id to use
 	 * $replacement instead (default: 0 = "deleted/anonymous character").
 	 *
@@ -590,12 +697,16 @@ class ledger
 		return (int) $this->db->sql_affectedrows();
 	}
 
-	protected function sum_lines_for_account(int $account_id, int $user_id, int $as_of): array
+	protected function sum_lines_for_account(int $account_id, int $user_id, int $as_of, int $player_id = 0): array
 	{
 		$where = 'l.account_id = ' . $account_id;
 		if ($user_id > 0)
 		{
 			$where .= ' AND l.subledger_user_id = ' . $user_id;
+		}
+		if ($player_id > 0)
+		{
+			$where .= ' AND l.subledger_player_id = ' . $player_id;
 		}
 		if ($as_of > 0)
 		{
