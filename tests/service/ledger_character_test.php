@@ -9,15 +9,9 @@ namespace avathar\bbaccounts\tests\service;
 
 class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_case
 {
-	protected function ledger(): \avathar\bbaccounts\service\ledger
-	{
-		global $phpbb_container;
-		return $phpbb_container->get('avathar.bbaccounts.service.ledger');
-	}
-
 	public function test_create_account_accepts_character_subledger_type(): void
 	{
-		$id = $this->ledger()->create_account(
+		$id = $this->ledger->create_account(
 			'7000',
 			'DKP Pool 1 Wallets',
 			'liability',
@@ -37,17 +31,17 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 	protected function seed_accounts(): array
 	{
 		return [
-			'cash'      => $this->ledger()->create_account('1000', 'Cash',           'asset',     'POINTS', 0, ''),
-			'wallets_c' => $this->ledger()->create_account('2100', 'User Wallets',   'liability', 'POINTS', 0, 'customer'),
-			'wallets_p' => $this->ledger()->create_account('7100', 'Player Wallets', 'liability', 'POINTS', 0, 'character'),
-			'exp'       => $this->ledger()->create_account('5000', 'Expenses',       'expense',   'POINTS', 0, ''),
+			'cash'      => $this->ledger->create_account('1000', 'Cash',           'asset',     'POINTS', 0, ''),
+			'wallets_c' => $this->ledger->create_account('2100', 'User Wallets',   'liability', 'POINTS', 0, 'customer'),
+			'wallets_p' => $this->ledger->create_account('7100', 'Player Wallets', 'liability', 'POINTS', 0, 'character'),
+			'exp'       => $this->ledger->create_account('5000', 'Expenses',       'expense',   'POINTS', 0, ''),
 		];
 	}
 
 	public function test_create_entry_accepts_character_account_with_player_id(): void
 	{
 		$a = $this->seed_accounts();
-		$journal_id = $this->ledger()->create_entry(
+		$journal_id = $this->ledger->create_entry(
 			time(),
 			'raid award',
 			[
@@ -63,7 +57,7 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 		$a = $this->seed_accounts();
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('requires a subledger_player_id');
-		$this->ledger()->create_entry(
+		$this->ledger->create_entry(
 			time(),
 			'bad',
 			[
@@ -78,7 +72,7 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 		$a = $this->seed_accounts();
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('accepts subledger_player_id, not subledger_user_id');
-		$this->ledger()->create_entry(
+		$this->ledger->create_entry(
 			time(),
 			'bad',
 			[
@@ -93,7 +87,7 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 		$a = $this->seed_accounts();
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('accepts subledger_user_id, not subledger_player_id');
-		$this->ledger()->create_entry(
+		$this->ledger->create_entry(
 			time(),
 			'bad',
 			[
@@ -108,7 +102,7 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 		$a = $this->seed_accounts();
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('does not accept');
-		$this->ledger()->create_entry(
+		$this->ledger->create_entry(
 			time(),
 			'bad',
 			[
