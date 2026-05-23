@@ -32,7 +32,8 @@ class ledger_character_test extends \avathar\bbaccounts\tests\bbaccounts_test_ca
 	{
 		return [
 			'cash'      => $this->ledger->create_account('1000', 'Cash',           'asset',     'POINTS', 0, ''),
-			'wallets_c' => $this->ledger->create_account('2100', 'User Wallets',   'liability', 'POINTS', 0, 'customer'),
+			// 2100 is already seeded by load_fixture(); use a distinct code.
+			'wallets_c' => $this->ledger->create_account('2150', 'User Wallets (test)', 'liability', 'POINTS', 0, 'customer'),
 			'wallets_p' => $this->ledger->create_account('7100', 'Player Wallets', 'liability', 'POINTS', 0, 'character'),
 			'exp'       => $this->ledger->create_account('5000', 'Expenses',       'expense',   'POINTS', 0, ''),
 		];

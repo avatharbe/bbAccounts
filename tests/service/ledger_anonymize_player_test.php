@@ -21,7 +21,9 @@ class ledger_anonymize_player_test extends \avathar\bbaccounts\tests\bbaccounts_
 
 	protected function seed_customer_account(): int
 	{
-		return $this->ledger->create_account('2100', 'User Wallets', 'liability', 'POINTS', 0, 'customer');
+		// 2100 is already seeded by load_fixture(); use a distinct code so this test
+		// owns its own customer-subledger account.
+		return $this->ledger->create_account('2150', 'User Wallets (test)', 'liability', 'POINTS', 0, 'customer');
 	}
 
 	protected function post_character_entry(int $expense_id, int $wallet_id, int $player_id, string $amount): int

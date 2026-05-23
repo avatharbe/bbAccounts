@@ -49,7 +49,8 @@ class ledger_character_balance_test extends \avathar\bbaccounts\tests\bbaccounts
 	public function test_ignores_user_subledger_lines_for_same_numeric_id(): void
 	{
 		$exp_c    = $this->ledger->create_account('5000', 'Expenses',     'expense',   'POINTS', 0, '');
-		$wallet_c = $this->ledger->create_account('2100', 'User Wallets', 'liability', 'POINTS', 0, 'customer');
+		// 2100 is already seeded by load_fixture(); use a distinct code.
+		$wallet_c = $this->ledger->create_account('2150', 'User Wallets (test)', 'liability', 'POINTS', 0, 'customer');
 
 		// Customer entry — user_id 42, NOT player_id 42
 		$this->ledger->create_entry(
