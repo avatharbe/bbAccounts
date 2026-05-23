@@ -811,31 +811,34 @@ class ledger
 
 				case 'customer':
 				case 'supplier':
-					if ($user_id === 0)
-					{
-						throw new \InvalidArgumentException(
-							"Line {$i}: account requires a subledger_user_id."
-						);
-					}
+					// Check wrong-type subledger first so that a caller passing the
+					// other subledger field gets a precise diagnostic instead of
+					// the generic "required field missing" message.
 					if ($player_id !== 0)
 					{
 						throw new \InvalidArgumentException(
 							"Line {$i}: account accepts subledger_user_id, not subledger_player_id."
 						);
 					}
+					if ($user_id === 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account requires a subledger_user_id."
+						);
+					}
 					break;
 
 				case 'character':
-					if ($player_id === 0)
-					{
-						throw new \InvalidArgumentException(
-							"Line {$i}: account requires a subledger_player_id."
-						);
-					}
 					if ($user_id !== 0)
 					{
 						throw new \InvalidArgumentException(
 							"Line {$i}: account accepts subledger_player_id, not subledger_user_id."
+						);
+					}
+					if ($player_id === 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account requires a subledger_player_id."
 						);
 					}
 					break;
