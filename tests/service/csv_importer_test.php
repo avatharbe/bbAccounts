@@ -148,6 +148,80 @@ class csv_importer_test extends \avathar\bbaccounts\tests\database_test_case
 		self::assertTrue($found, 'expected subledger-user-id-required error on the line');
 	}
 
+	public function test_character_subledger_with_player_id_parses_clean(): void
+	{
+		// Account 7100 has subledger_type='character' (see fixtures/accounts.xml).
+		// Non-subledger account 1010 paired with character account 7100 (player_id=42).
+		$csv = "entry_ref,entry_date,description,account_code,debit,credit,subledger_player_id\n"
+			. "C,2026-05-23,Char award,1010,50.00,0,0\n"
+			. "C,2026-05-23,Char award,7100,0,50.00,42\n";
+
+		$parsed = $this->importer->parse_and_validate($csv);
+
+		self::assertSame([], $parsed['global_errors']);
+		self::assertTrue($this->importer->is_clean($parsed), 'CSV with subledger_player_id should validate clean');
+	}
+
+	public function test_character_account_missing_player_id_rejected(): void
+	{
+		$csv = "entry_ref,entry_date,description,account_code,debit,credit,subledger_player_id\n"
+			. "C,2026-05-23,Bad,1010,50.00,0,0\n"
+			. "C,2026-05-23,Bad,7100,0,50.00,0\n";
+
+		$parsed = $this->importer->parse_and_validate($csv);
+
+		self::assertFalse($this->importer->is_clean($parsed));
+		$found = false;
+		foreach ($parsed['entries']['C']['lines'] as $line)
+		{
+			foreach ($line['errors'] as $msg)
+			{
+				if (str_contains($msg, 'requires subledger_player_id'))
+				{
+					$found = true;
+				}
+			}
+		}
+		self::assertTrue($found, 'expected subledger-player-id-required error on the line');
+	}
+
+	public function test_customer_account_with_player_id_rejected(): void
+	{
+		// Account 2100 is customer-subledger; supplying subledger_player_id on
+		// it must be rejected by the mutual-exclusion rule.
+		$csv = "entry_ref,entry_date,description,account_code,debit,credit,subledger_user_id,subledger_player_id\n"
+			. "C,2026-05-23,Bad,1010,50.00,0,0,0\n"
+			. "C,2026-05-23,Bad,2100,0,50.00,0,42\n";
+
+		$parsed = $this->importer->parse_and_validate($csv);
+
+		self::assertFalse($this->importer->is_clean($parsed));
+		$found = false;
+		foreach ($parsed['entries']['C']['lines'] as $line)
+		{
+			foreach ($line['errors'] as $msg)
+			{
+				if (str_contains($msg, 'accepts subledger_user_id, not subledger_player_id'))
+				{
+					$found = true;
+				}
+			}
+		}
+		self::assertTrue($found, 'expected mutual-exclusion error on the customer line');
+	}
+
+	public function test_csv_omitting_player_id_column_still_works(): void
+	{
+		// Backward compatibility: CSV without the new optional column imports cleanly.
+		$csv = "entry_ref,entry_date,description,account_code,debit,credit\n"
+			. "B,2026-05-23,Back-compat,1010,10.00,0\n"
+			. "B,2026-05-23,Back-compat,5050,0,10.00\n";
+
+		$parsed = $this->importer->parse_and_validate($csv);
+		self::assertSame([], $parsed['global_errors']);
+		self::assertTrue($this->importer->is_clean($parsed));
+	}
+
 	public function test_malformed_csv_missing_required_column_rejected(): void
 	{
 		// Header lacks 'credit' — global error short-circuits parsing.

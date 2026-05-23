@@ -18,7 +18,7 @@ namespace avathar\bbaccounts\service;
 class csv_importer
 {
 	public const REQUIRED_COLUMNS = ['entry_ref', 'entry_date', 'description', 'account_code', 'debit', 'credit'];
-	public const OPTIONAL_COLUMNS = ['subledger_user_id', 'memo', 'reference_type', 'reference_source', 'reference_id'];
+	public const OPTIONAL_COLUMNS = ['subledger_user_id', 'subledger_player_id', 'memo', 'reference_type', 'reference_source', 'reference_id'];
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -139,12 +139,13 @@ class csv_importer
 			}
 
 			$line = [
-				'line_no'           => $line_no,
-				'account_code'      => trim((string) ($row[$col_index['account_code']] ?? '')),
-				'debit'             => $debit,
-				'credit'            => $credit,
-				'subledger_user_id' => isset($col_index['subledger_user_id']) ? (int) ($row[$col_index['subledger_user_id']] ?? 0) : 0,
-				'memo'              => isset($col_index['memo']) ? trim((string) ($row[$col_index['memo']] ?? '')) : '',
+				'line_no'             => $line_no,
+				'account_code'        => trim((string) ($row[$col_index['account_code']] ?? '')),
+				'debit'               => $debit,
+				'credit'              => $credit,
+				'subledger_user_id'   => isset($col_index['subledger_user_id'])   ? (int) ($row[$col_index['subledger_user_id']]   ?? 0) : 0,
+				'subledger_player_id' => isset($col_index['subledger_player_id']) ? (int) ($row[$col_index['subledger_player_id']] ?? 0) : 0,
+				'memo'                => isset($col_index['memo']) ? trim((string) ($row[$col_index['memo']] ?? '')) : '',
 				'reference_type'    => isset($col_index['reference_type']) && trim((string) $row[$col_index['reference_type']]) !== ''
 					? trim((string) $row[$col_index['reference_type']])
 					: 'manual',
@@ -228,7 +229,8 @@ class csv_importer
 					}
 					$currencies[$account['currency_code']] = true;
 
-					if ((string) $account['subledger_type'] !== '')
+					$subledger_type = (string) $account['subledger_type'];
+					if ($subledger_type === 'customer' || $subledger_type === 'supplier')
 					{
 						if ($line['subledger_user_id'] <= 0)
 						{
@@ -237,6 +239,31 @@ class csv_importer
 						else if (!isset($valid_user_ids[$line['subledger_user_id']]))
 						{
 							$line['errors'][] = sprintf('Row %d: subledger_user_id %d does not exist.', $line['line_no'], $line['subledger_user_id']);
+						}
+						if ($line['subledger_player_id'] > 0)
+						{
+							$line['errors'][] = sprintf('Row %d: account "%s" accepts subledger_user_id, not subledger_player_id.', $line['line_no'], $code);
+						}
+					}
+					else if ($subledger_type === 'character')
+					{
+						if ($line['subledger_player_id'] <= 0)
+						{
+							$line['errors'][] = sprintf('Row %d: account "%s" requires subledger_player_id.', $line['line_no'], $code);
+						}
+						// No existence check on subledger_player_id — bbAccounts is
+						// source-agnostic about bb_players (per spec §D8).
+						if ($line['subledger_user_id'] > 0)
+						{
+							$line['errors'][] = sprintf('Row %d: account "%s" accepts subledger_player_id, not subledger_user_id.', $line['line_no'], $code);
+						}
+					}
+					else
+					{
+						// No-subledger account: neither ID may be populated.
+						if ($line['subledger_user_id'] > 0 || $line['subledger_player_id'] > 0)
+						{
+							$line['errors'][] = sprintf('Row %d: account "%s" does not accept a subledger_user_id or subledger_player_id.', $line['line_no'], $code);
 						}
 					}
 				}

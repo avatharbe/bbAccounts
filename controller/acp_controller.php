@@ -827,11 +827,12 @@ class acp_controller
 				{
 					$account = $line['account'];
 					$lines[] = [
-						'account_id'        => (int) ($account['account_id'] ?? 0),
-						'debit'             => (string) $line['debit'],
-						'credit'            => (string) $line['credit'],
-						'subledger_user_id' => (int) $line['subledger_user_id'],
-						'memo'              => (string) $line['memo'],
+						'account_id'          => (int) ($account['account_id'] ?? 0),
+						'debit'               => (string) $line['debit'],
+						'credit'              => (string) $line['credit'],
+						'subledger_user_id'   => (int) $line['subledger_user_id'],
+						'subledger_player_id' => (int) $line['subledger_player_id'],
+						'memo'                => (string) $line['memo'],
 					];
 				}
 
