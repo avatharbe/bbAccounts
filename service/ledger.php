@@ -565,6 +565,31 @@ class ledger
 		return $this->normal_balance($account['account_type'], $dr, $cr);
 	}
 
+	/**
+	 * Rewrite all journal_lines where subledger_player_id = $player_id to use
+	 * $replacement instead (default: 0 = "deleted/anonymous character").
+	 *
+	 * Invoked by consumers (e.g. bbDKP via its own listener on bbGuild's
+	 * player-deleted event) because bbAccounts must stay source-agnostic
+	 * about bb_players.
+	 *
+	 * @return int rows affected
+	 */
+	public function anonymize_player_subledger(int $player_id, int $replacement = 0): int
+	{
+		if ($player_id <= 0)
+		{
+			throw new \InvalidArgumentException('player_id must be > 0');
+		}
+
+		$sql = 'UPDATE ' . $this->lines_table
+			. ' SET subledger_player_id = ' . (int) $replacement
+			. ' WHERE subledger_player_id = ' . (int) $player_id;
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_affectedrows();
+	}
+
 	protected function sum_lines_for_account(int $account_id, int $user_id, int $as_of): array
 	{
 		$where = 'l.account_id = ' . $account_id;
