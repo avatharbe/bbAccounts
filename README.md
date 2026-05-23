@@ -4,6 +4,8 @@ bbAccounts for phpBB 3.3
 [![Tests](https://github.com/avatharbe/bbAccounts/actions/workflows/tests.yml/badge.svg)](https://github.com/avatharbe/bbAccounts/actions/workflows/tests.yml)
 
 Double-entry accounting for phpBB. Provides a ledger service plus an admin UI; designed as a point-storage foundation that other phpBB extensions can post journal entries against.
+#### Version
+1.1.0-alpha1
 
 #### Requirements
 - phpBB 3.3.0 or higher
