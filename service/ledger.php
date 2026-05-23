@@ -11,7 +11,7 @@ class ledger
 {
 	public const VALID_REFERENCE_TYPES = ['manual', 'auto', 'import'];
 	public const VALID_ACCOUNT_TYPES   = ['asset', 'liability', 'equity', 'revenue', 'expense'];
-	public const VALID_SUBLEDGER_TYPES = ['', 'customer', 'supplier'];
+	public const VALID_SUBLEDGER_TYPES = ['', 'customer', 'supplier', 'character'];
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -87,7 +87,7 @@ class ledger
 		if (!in_array($subledger_type, self::VALID_SUBLEDGER_TYPES, true))
 		{
 			throw new \InvalidArgumentException(
-				"subledger_type must be 'customer', 'supplier', or empty."
+				"subledger_type must be one of '', 'customer', 'supplier', 'character'."
 			);
 		}
 		if (!$this->currency_is_active($currency_code))
@@ -152,7 +152,7 @@ class ledger
 		if ($subledger_type !== null && !in_array($subledger_type, self::VALID_SUBLEDGER_TYPES, true))
 		{
 			throw new \InvalidArgumentException(
-				"subledger_type must be 'customer', 'supplier', empty string, or null."
+				"subledger_type must be one of '', 'customer', 'supplier', 'character', or null."
 			);
 		}
 
