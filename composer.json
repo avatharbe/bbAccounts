@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Double-entry accounting for phpBB 3.3. Source-agnostic ledger service plus admin UI; designed as a point-storage foundation for other phpBB extensions.",
     "homepage": "https://github.com/avatharbe/bbAccounts",
-    "version": "1.0.0-alpha",
-    "time": "2026-05-14",
+    "version": "1.1.0-alpha",
+    "time": "2026-05-23",
     "keywords": ["phpbb", "extension", "accounting", "ledger", "double-entry"],
     "license": "GPL-2.0-only",
     "authors": [

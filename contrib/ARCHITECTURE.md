@@ -59,12 +59,18 @@ Journal entries are **immutable**. Corrections are recorded as **reversing entri
 
 ### Subledgers
 
-Accounts with a `subledger_type` are **control accounts**. Journal lines on these accounts carry a `subledger_user_id` linking to a phpBB user. This provides per-user detail within GL accounts without a separate entity table — phpBB's user system *is* the customer/supplier master data.
+Accounts with a `subledger_type` are **control accounts**. Journal lines on these accounts carry one of two opaque UINT references — `subledger_user_id` for user-keyed subledgers, or `subledger_player_id` for character-keyed subledgers. This provides per-entity detail within GL accounts without a separate entity table — the consumer's own ID space *is* the master data.
 
-- `subledger_type = 'customer'`: tracks what the forum owes users (wallets) or what users owe the forum (receivables)
-- `subledger_type = 'supplier'`: tracks what the forum owes external suppliers
+bbAccounts supports four `subledger_type` values:
 
-A user's balance on a control account is `SUM(credit) − SUM(debit)` for liability accounts (credit-normal), or `SUM(debit) − SUM(credit)` for asset accounts (debit-normal).
+- `''` (empty) — no subledger; journal lines must populate neither ID column.
+- `'customer'` — tracks what the forum owes users (wallets) or what users owe the forum (receivables). Lines populate `subledger_user_id` (FK to `phpbb_users.user_id`).
+- `'supplier'` — tracks what the forum owes external suppliers. Lines populate `subledger_user_id`.
+- `'character'` — tracks per-character balances managed by an external owner (conventionally `bb_players.player_id` from bbGuild). Lines populate `subledger_player_id`. bbAccounts ships no FK and no listener that depends on the external table; consumers call `ledger::anonymize_player_subledger($player_id)` when their domain entity is deleted.
+
+Strict mutual exclusion is enforced by `validate_lines()` — `'customer'`/`'supplier'` lines must populate `subledger_user_id` (and zero out `subledger_player_id`); `'character'` lines must populate `subledger_player_id` (and zero out `subledger_user_id`); `''` lines must zero out both. Violations throw at posting time.
+
+A subledger entity's balance on a control account is `SUM(credit) − SUM(debit)` for liability accounts (credit-normal), or `SUM(debit) − SUM(credit)` for asset accounts (debit-normal). Read APIs come in parallel user-keyed and character-keyed variants — `get_subledger_balance` / `get_subledger_balance_by_character`, and `get_subledger_account_balances` / `get_subledger_account_balances_by_character`.
 
 ---
 
