@@ -216,12 +216,13 @@ class ledger
 		foreach ($lines as $line)
 		{
 			$sql = 'INSERT INTO ' . $this->lines_table . ' ' . $this->db->sql_build_array('INSERT', [
-				'journal_id'        => $journal_id,
-				'account_id'        => (int) $line['account_id'],
-				'debit'             => (string) $line['debit'],
-				'credit'            => (string) $line['credit'],
-				'subledger_user_id' => (int) ($line['subledger_user_id'] ?? 0),
-				'memo'              => (string) ($line['memo'] ?? ''),
+				'journal_id'          => $journal_id,
+				'account_id'          => (int) $line['account_id'],
+				'debit'               => (string) $line['debit'],
+				'credit'              => (string) $line['credit'],
+				'subledger_user_id'   => (int) ($line['subledger_user_id']   ?? 0),
+				'subledger_player_id' => (int) ($line['subledger_player_id'] ?? 0),
+				'memo'                => (string) ($line['memo'] ?? ''),
 			]);
 			$this->db->sql_query($sql);
 		}
@@ -242,7 +243,7 @@ class ledger
 			throw new \LogicException("Cannot create a reversal of a reversal (#{$journal_id}).");
 		}
 
-		$sql = 'SELECT account_id, debit, credit, subledger_user_id, memo
+		$sql = 'SELECT account_id, debit, credit, subledger_user_id, subledger_player_id, memo
                 FROM ' . $this->lines_table . '
                 WHERE journal_id = ' . $journal_id . '
                 ORDER BY line_id';
@@ -258,11 +259,12 @@ class ledger
 		foreach ($orig_lines as $line)
 		{
 			$mirror[] = [
-				'account_id'        => (int) $line['account_id'],
-				'debit'             => $line['credit'],
-				'credit'            => $line['debit'],
-				'subledger_user_id' => (int) $line['subledger_user_id'],
-				'memo'              => $line['memo'],
+				'account_id'          => (int) $line['account_id'],
+				'debit'               => $line['credit'],
+				'credit'              => $line['debit'],
+				'subledger_user_id'   => (int) $line['subledger_user_id'],
+				'subledger_player_id' => (int) $line['subledger_player_id'],
+				'memo'                => $line['memo'],
 			];
 		}
 
@@ -283,12 +285,13 @@ class ledger
 		foreach ($mirror as $line)
 		{
 			$sql = 'INSERT INTO ' . $this->lines_table . ' ' . $this->db->sql_build_array('INSERT', [
-				'journal_id'        => $reverse_id,
-				'account_id'        => $line['account_id'],
-				'debit'             => $line['debit'],
-				'credit'            => $line['credit'],
-				'subledger_user_id' => $line['subledger_user_id'],
-				'memo'              => $line['memo'],
+				'journal_id'          => $reverse_id,
+				'account_id'          => $line['account_id'],
+				'debit'               => $line['debit'],
+				'credit'              => $line['credit'],
+				'subledger_user_id'   => $line['subledger_user_id'],
+				'subledger_player_id' => $line['subledger_player_id'],
+				'memo'                => $line['memo'],
 			]);
 			$this->db->sql_query($sql);
 		}
@@ -655,15 +658,51 @@ class ledger
 				throw new \InvalidArgumentException("Line {$i}: mixed-pool entry rejected (expected {$first_currency}, got {$account['currency_code']}).");
 			}
 
-			$is_subledger = $account['subledger_type'] !== '';
-			$sub_id = (int) ($line['subledger_user_id'] ?? 0);
-			if ($is_subledger && $sub_id === 0)
+			$subledger_type = $account['subledger_type'];
+			$user_id   = (int) ($line['subledger_user_id']   ?? 0);
+			$player_id = (int) ($line['subledger_player_id'] ?? 0);
+
+			switch ($subledger_type)
 			{
-				throw new \InvalidArgumentException("Line {$i}: account requires a subledger_user_id.");
-			}
-			if (!$is_subledger && $sub_id !== 0)
-			{
-				throw new \InvalidArgumentException("Line {$i}: account does not accept a subledger_user_id.");
+				case '':
+					if ($user_id !== 0 || $player_id !== 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account does not accept a subledger_user_id or subledger_player_id."
+						);
+					}
+					break;
+
+				case 'customer':
+				case 'supplier':
+					if ($user_id === 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account requires a subledger_user_id."
+						);
+					}
+					if ($player_id !== 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account accepts subledger_user_id, not subledger_player_id."
+						);
+					}
+					break;
+
+				case 'character':
+					if ($player_id === 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account requires a subledger_player_id."
+						);
+					}
+					if ($user_id !== 0)
+					{
+						throw new \InvalidArgumentException(
+							"Line {$i}: account accepts subledger_player_id, not subledger_user_id."
+						);
+					}
+					break;
 			}
 
 			$debits  = bcadd($debits,  $debit,  2);
