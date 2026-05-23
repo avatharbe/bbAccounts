@@ -844,14 +844,14 @@ class ledger_test extends \avathar\bbaccounts\tests\database_test_case
 	public function test_list_accounts_returns_all_when_no_filter(): void
 	{
 		$rows = $this->ledger->list_accounts();
-		$this->assertCount(6, $rows, 'Fixture has 6 accounts; list_accounts() with no filter should return them all (incl. inactive).');
+		$this->assertCount(7, $rows, 'Fixture has 7 accounts; list_accounts() with no filter should return them all (incl. inactive).');
 	}
 
 	public function test_list_accounts_orders_by_account_code(): void
 	{
 		$rows = $this->ledger->list_accounts();
 		$codes = array_column($rows, 'account_code');
-		$this->assertSame(['1010', '2100', '2200', '5050', '6500', '9999'], $codes);
+		$this->assertSame(['1010', '2100', '2200', '5050', '6500', '7100', '9999'], $codes);
 	}
 
 	public function test_list_accounts_includes_inactive_accounts(): void
@@ -883,8 +883,9 @@ class ledger_test extends \avathar\bbaccounts\tests\database_test_case
 		$rows = $this->ledger->list_accounts('liability');
 		$ids = array_map('intval', array_column($rows, 'account_id'));
 		sort($ids);
-		// Fixture: id=2 (User Wallets, POINTS), id=4 (Gold Wallets, GOLD).
-		$this->assertSame([2, 4], $ids);
+		// Fixture: id=2 (User Wallets, POINTS), id=4 (Gold Wallets, GOLD),
+		// id=7 (Player Wallets, POINTS, character subledger).
+		$this->assertSame([2, 4, 7], $ids);
 	}
 
 	public function test_list_accounts_filters_by_subledger_customer(): void

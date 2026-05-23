@@ -77,10 +77,10 @@ abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
 
     /**
      * Resolve database credentials. Priority:
-     *   1. tests/test_config.php at the phpBB root — this is what
-     *      phpbb-extensions/test-framework writes during CI. Standard
-     *      phpBB convention.
-     *   2. The live phpBB config.php at the same root — local dev mode;
+     *   1. PHPBB_TEST_* server vars — set by phpBB's phpunit-<db>-github.xml
+     *      via <server name="..."/> entries during CI.
+     *   2. tests/test_config.php at the phpBB root — older phpBB CI convention.
+     *   3. The live phpBB config.php at the same root — local dev mode;
      *      pick the block whose dbname matches 'avathar_be'.
      */
     protected static function load_db_config(): array
@@ -90,9 +90,26 @@ abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
             return $cfg;
         }
 
+        // 1. CI — phpBB's phpunit-<db>-github.xml exports PHPBB_TEST_* via <server>.
+        if (!empty($_SERVER['PHPBB_TEST_DBHOST'])) {
+            $dbms = $_SERVER['PHPBB_TEST_DBMS'] ?? 'mysqli';
+            if (strpos($dbms, '\\') === false) {
+                $dbms = 'phpbb\\db\\driver\\' . $dbms;
+            }
+            $cfg = [
+                'dbms'     => $dbms,
+                'dbhost'   => $_SERVER['PHPBB_TEST_DBHOST'],
+                'dbport'   => (string) ($_SERVER['PHPBB_TEST_DBPORT'] ?? ''),
+                'dbname'   => $_SERVER['PHPBB_TEST_DBNAME'] ?? '',
+                'dbuser'   => $_SERVER['PHPBB_TEST_DBUSER'] ?? '',
+                'dbpasswd' => $_SERVER['PHPBB_TEST_DBPASSWD'] ?? '',
+            ];
+            return $cfg;
+        }
+
         $phpbb_root_path = realpath(__DIR__ . '/../../../../') . '/';
 
-        // 1. CI / standard phpBB test framework path.
+        // 2. Older phpBB CI convention.
         $test_config = $phpbb_root_path . 'tests/test_config.php';
         if (is_file($test_config)) {
             $dbms = $dbhost = $dbport = $dbname = $dbuser = $dbpasswd = '';
@@ -108,8 +125,14 @@ abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
             return $cfg;
         }
 
-        // 2. Local dev fallback.
+        // 3. Local dev fallback.
         $config_path = $phpbb_root_path . 'config.php';
+        if (!is_file($config_path)) {
+            throw new \RuntimeException(
+                "bbaccounts_test_case: no DB credentials available — none of PHPBB_TEST_DBHOST, "
+                . "{$phpbb_root_path}tests/test_config.php, or {$config_path} are set/present."
+            );
+        }
         $contents = file_get_contents($config_path);
 
         $extract_all = function (string $name) use ($contents): array {
