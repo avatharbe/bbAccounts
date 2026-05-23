@@ -13,14 +13,14 @@ Double-entry accounting for phpBB. Provides a ledger service plus an admin UI; d
 #### Core features
 - Double-entry ledger with immutable journal entries (INSERT-only; corrections are reversal entries)
 - Multi-pool isolation via per-account `currency_code`; currencies are first-class managed entities (no cross-pool transfers)
-- Subledgers per phpBB user (no separate entity table)
+- Subledgers per phpBB user (`'customer'`/`'supplier'` types) or per opaque external entity (`'character'` type — e.g. bbGuild character IDs); no separate master-data tables
 - Source-agnostic: any extension can post journal entries through the ledger service
 - Derived balances (no denormalised totals stored — `SUM()` over journal lines)
 - bcmath-precision arithmetic; balances stored as `DECIMAL(20,2)`
 
 #### ACP Modes
 - **Currencies**: managed list of pools (code, name, precision, is_active); add / edit / disable. Code is locked once any account references it.
-- **Chart of Accounts**: list, add, edit, disable accounts (5 standard types plus customer/supplier subledgers); per-row balance column with abnormal-direction highlighting; currency picker sourced from the active currencies list.
+- **Chart of Accounts**: list, add, edit, disable accounts (5 standard types plus customer / supplier / character subledgers); per-row balance column with abnormal-direction highlighting; currency picker sourced from the active currencies list.
 - **Journal**: list entries with reversal badges and a per-entry subledger-user(s) column (coloured profile links); create new entries (multi-line, server-side balance validation); two-step reverse-entry confirm; **bulk import via CSV**.
 - **Reports**: 5 sub-modes — *trial balance* (grouped by currency pool, BALANCED / UNBALANCED indicator), *account ledger* (paginated drill-down per account), *subledger statement* (paginated per-user transaction list), *single-account balance lookup*, *user-balance lookup* (resolves username via `user_loader`).
 
@@ -34,7 +34,7 @@ Double-entry accounting for phpBB. Provides a ledger service plus an admin UI; d
 #### Bulk import via CSV
 The Journal mode includes an "Import CSV" upload that parses the file, runs every existing service-layer validation, shows a per-entry preview, and on confirmation commits the whole file in one DB transaction (any single-entry failure rolls the whole import back). See [`contrib/sample-import.csv`](contrib/sample-import.csv) for a working file that imports cleanly against the default seed.
 
-The format is one row per journal **line**, grouped into entries by `entry_ref`. Required columns: `entry_ref`, `entry_date`, `description`, `account_code`, `debit`, `credit`. Optional: `subledger_user_id`, `memo`, `reference_type`, `reference_source`, `reference_id`. UTF-8, RFC 4180 quoting. First row of each `entry_ref` group sets the entry-level fields (`entry_date`, `description`, `reference_*`); each subsequent row contributes a line.
+The format is one row per journal **line**, grouped into entries by `entry_ref`. Required columns: `entry_ref`, `entry_date`, `description`, `account_code`, `debit`, `credit`. Optional: `subledger_user_id`, `subledger_player_id`, `memo`, `reference_type`, `reference_source`, `reference_id`. UTF-8, RFC 4180 quoting. First row of each `entry_ref` group sets the entry-level fields (`entry_date`, `description`, `reference_*`); each subsequent row contributes a line.
 
 Entries with different `entry_ref` may use different currency pools — pool consistency is enforced **per entry**, not per file. Example multi-currency snippet (requires the `EUR` pool and a matching cash account to be created first):
 
