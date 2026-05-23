@@ -13,6 +13,8 @@
  * (5 accounts across two pools, one inactive). Journal + journal_lines start empty.
  */
 
+namespace avathar\bbaccounts\tests;
+
 abstract class bbaccounts_test_case extends \PHPUnit\Framework\TestCase
 {
     /** @var \phpbb\db\driver\mysqli */
